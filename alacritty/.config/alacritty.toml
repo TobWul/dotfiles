@@ -5,20 +5,13 @@ import = [
 [env]
 TERM = "xterm-256color"
 
+[window]
+decorations = "Buttonless"
+startup_mode = "Maximized"
+decorations_theme_variant = "Dark"
+
 [font]
 size = 14.0
-
-[font.bold]
-family = "JetbrainsMonoNL Nerd Font Mono"
-style = "Bold"
-
-[font.bold_italic]
-family = "JetbrainsMonoNL Nerd Font Mono"
-style = "Bold Italic"
-
-[font.italic]
-family = "JetbrainsMonoNL Nerd Font Mono"
-style = "Italic"
 
 [font.normal]
 family = "JetbrainsMonoNL Nerd Font Mono"
