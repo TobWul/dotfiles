@@ -3,7 +3,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "tsserver", "tailwindcss" },
+				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls" },
 			})
 		end,
 	},
@@ -29,6 +29,27 @@ return {
 					-- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
 					-- Defaults to error.
 					diagnosticSeverity = "Error",
+				},
+			})
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+			lspconfig.emmet_ls.setup({
+				-- on_attach = on_attach,
+				capabilities = capabilities,
+				filetypes = {
+					"css",
+					"eruby",
+					"html",
+					"javascript",
+					"javascriptreact",
+					"less",
+					"sass",
+					"scss",
+					"svelte",
+					"pug",
+					"typescriptreact",
+					"vue",
 				},
 			})
 
