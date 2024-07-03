@@ -1,4 +1,5 @@
 vim.o.conceallevel = 1
+vim.cmd("syntax off")
 vim.cmd("set expandtab")
 vim.cmd("set tabstop=2")
 vim.cmd("set softtabstop=2")
