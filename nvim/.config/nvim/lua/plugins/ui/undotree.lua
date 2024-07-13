@@ -14,11 +14,18 @@ return {
 				vim.opt.undofile = true
 			end
 
-			-- Set up a keybinding to toggle the undotree and focus
-			vim.keymap.set("n", "<leader>u", function()
-				vim.cmd.UndotreeToggle()
-				vim.cmd.UndotreeFocus()
-			end, { desc = "Open undo tree" })
+			local wk = require("which-key")
+			wk.add({
+				{
+					"<leader>u",
+					function()
+						vim.cmd.UndotreeToggle()
+						vim.cmd.UndotreeFocus()
+					end,
+					desc = "Open undo tree",
+					icon = { icon = "󰕌" },
+				},
+			})
 		end,
 	},
 }

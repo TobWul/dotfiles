@@ -1,16 +1,13 @@
 return {
-
 	{
 		"github/copilot.vim",
 		config = function()
 			local wk = require("which-key")
-			wk.register({
-				["<leader>cc"] = {
-					name = "+copilot",
-					e = { "<cmd>Copilot enable<cr>", "Enable GitHub Copilot" },
-					d = { "<cmd>Copilot disable<cr>", "Disable GitHub Copilot" },
-					p = { "<cmd>Copilot panel<cr>", "Open GitHub Copilot panel" },
-				},
+			wk.add({
+				{ "<leader>cc", group = "copilot" },
+				{ "<leader>cce", "<cmd>Copilot enable<cr>", desc = "Enable GitHub Copilot" },
+				{ "<leader>ccd", "<cmd>Copilot disable<cr>", desc = "Disable GitHub Copilot" },
+				{ "<leader>ccp", "<cmd>Copilot panel<cr>", desc = "Open GitHub Copilot panel" },
 			})
 		end,
 	},

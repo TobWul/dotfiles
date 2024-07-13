@@ -9,19 +9,7 @@ return {
 		-- your configuration comes here
 		-- or leave it empty to use the default settings
 		-- refer to the configuration section below
+		preset = "helix",
+		sort = { "group", "local", "order", "alphanum" },
 	},
-	config = function()
-		local wk = require("which-key")
-		wk.register({
-			["<leader>f"] = { name = "+file" },
-		})
-		wk.register({
-			["<leader>d"] = {
-				name = "+spell-check",
-				a = { "zg", "Add word under the cursor as a good word" },
-				b = { "zw", "Mark word as bad word" },
-				s = { "z=", "Suggestions" },
-			},
-		})
-	end,
 }

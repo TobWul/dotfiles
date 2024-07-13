@@ -17,7 +17,15 @@ return {
 					},
 				},
 			})
-			vim.keymap.set("n", "<leader>e", ":Neotree filesystem reveal left<CR>", { silent = true })
+			local wk = require("which-key")
+			wk.add({
+				{
+					"<leader>e",
+					"<cmd>Neotree filesystem reveal left<CR>",
+					desc = "Open neotree",
+					icon = { icon = "" },
+				},
+			})
 		end,
 	},
 }

@@ -5,20 +5,19 @@ return {
 		config = function()
 			local builtin = require("telescope.builtin")
 			local wk = require("which-key")
-			wk.register({
-				["<leader>f"] = { name = "+find" },
+			wk.add({
+				{ "<leader>f", group = "find" },
+				{ "<leader>fg", builtin.live_grep, desc = "Grep search" },
+				{ "<leader>ff", builtin.find_files, desc = "Open telescope" },
+				{ "<leader><leader>", builtin.buffers, desc = "Search buffer", hidden = true },
+				{ "<leader>fn", "<cmd>:noh<cr>", desc = "Clear search" },
+				{
+					"<leader>fc",
+					"y/\\V<C-R>=escape(@\",'/\\')<CR><CR>",
+					desc = "Search for visually selected text",
+					mode = "v",
+				},
 			})
-
-			vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Grep search" })
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Open telescope" })
-			vim.keymap.set("n", "<leader><leader>", builtin.buffers, {})
-			vim.keymap.set("n", "<leader>fn", "<cmd>:noh<cr>", { desc = "Clear search" })
-			vim.keymap.set(
-				{ "n", "v" },
-				"<leader>fc",
-				"y/\\V<C-R>=escape(@\",'/\\')<CR><CR>",
-				{ desc = "Search for visually selected text" }
-			)
 		end,
 	},
 	{

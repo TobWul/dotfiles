@@ -5,12 +5,10 @@ return {
 			current_line_blame_formatter = "<author>, <author_time:%d.%m.%Y> - <summary>",
 		})
 		local wk = require("which-key")
-		wk.register({
-			["<leader>gu"] = {
-				name = "+git ui",
-				b = { "<cmd>Gitsigns toggle_current_line_blame<cr>", "Toggle current line blame" },
-				p = { "<cmd>Gitsigns preview_hunk_inline<cr>", "Preview hunk inline" },
-			},
+		wk.add({
+			{ "<leader>gu", group = "git ui" },
+			{ "<leader>gub", "<cmd>Gitsigns toggle_current_line_blame<cr>", desc = "Toggle current line blame" },
+			{ "<leader>gup", "<cmd>Gitsigns preview_hunk_inline<cr>", desc = "Preview hunk inline" },
 		})
 	end,
 }

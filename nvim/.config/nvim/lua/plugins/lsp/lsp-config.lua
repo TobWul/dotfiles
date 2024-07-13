@@ -53,13 +53,12 @@ return {
 				},
 			})
 
-			wk.register({
-				["<leader>c"] = { name = "+code" },
+			wk.add({
+				{ "<leader>c", group = "code" },
+				{ "<leader>gd", vim.lsp.buf.definition, desc = "Go to definition" },
+				{ "<leader>ch", vim.lsp.buf.hover, desc = "Hover" },
+				{ "<leader>ca", vim.lsp.buf.code_action, desc = "Code action", mode = { "n", "v" } },
 			})
-
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-			vim.keymap.set("n", "<leader>ch", vim.lsp.buf.hover, { desc = "Hover" })
-			vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 		end,
 	},
 }
