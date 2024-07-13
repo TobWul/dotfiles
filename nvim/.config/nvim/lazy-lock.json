@@ -39,4 +39,3 @@
   "vim-tmux-navigator": { "branch": "master", "commit": "5b3c701686fb4e6629c100ed32e827edf8dad01e" },
   "which-key.nvim": { "branch": "main", "commit": "1b68a3ac067fb9bc099c151524009d0e4fc87c8d" },
   "zen-mode.nvim": { "branch": "main", "commit": "abe494d5489467fc470b73736fb7566b2102fd4b" }
-}
