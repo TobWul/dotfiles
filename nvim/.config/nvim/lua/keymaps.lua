@@ -52,4 +52,3 @@ vim.keymap.set("n", "<leader>s", "<cmd>w<CR>", { desc = "Save" })
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 -- Replace
-vim.keymap.set("x", "<leader>r", [[:<C-u>%s/\V<C-r><C-w>//gc<Left><Left><Left>]])

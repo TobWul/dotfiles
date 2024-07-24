@@ -57,7 +57,7 @@ return {
 
 			wk.add({
 				{ "<leader>c", group = "code" },
-				{ "<leader>gd", vim.lsp.buf.definition, desc = "Go to definition" },
+				{ "gd", vim.lsp.buf.definition, desc = "Go to definition" },
 				{ "<leader>ch", vim.lsp.buf.hover, desc = "Hover" },
 				{ "<leader>ca", vim.lsp.buf.code_action, desc = "Code action", mode = { "n", "v" } },
 			})

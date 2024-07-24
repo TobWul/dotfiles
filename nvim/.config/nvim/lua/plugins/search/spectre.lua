@@ -11,11 +11,17 @@ return {
 				desc = "Open spectre",
 				icon = { icon = "󰛔" },
 			},
+			-- {
+			--   "<leader>rw",
+			--   '<esc><cmd>lua require("spectre").open_visual()<CR>',
+			--   desc = "Search and replace word",
+			--   mode = "v",
+			-- },
 			{
 				"<leader>rw",
-				'<esc><cmd>lua require("spectre").open_visual()<CR>',
-				desc = "Search and replace word",
-				mode = "v",
+				[[:<C-u>%sV<C-r><C-w>//gc<Left><Left><Left>]],
+				desc = "Replace selected word",
+				mode = "x",
 			},
 		})
 	end,
