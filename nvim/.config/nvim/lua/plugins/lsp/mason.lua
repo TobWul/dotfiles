@@ -14,6 +14,7 @@ return {
 					"eslint_d", -- js linter
 					"markdownlint", -- markdown linter
 					"typos-lsp", -- spell checker
+					"darker", -- python formatter
 				},
 			})
 		end,

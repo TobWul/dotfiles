@@ -3,7 +3,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls" },
+				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls", "pyright" },
 			})
 		end,
 	},
@@ -36,6 +36,11 @@ return {
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+			lspconfig.pyright.setup({
+				capabilities = capabilities,
+			})
+
+			-- Emmet configuration
 			lspconfig.emmet_ls.setup({
 				-- on_attach = on_attach,
 				capabilities = capabilities,
