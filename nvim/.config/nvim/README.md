@@ -14,4 +14,5 @@ tmux \
 jesseduffield/lazygit/lazygit \
 ripgrep \
 fd \
+fzf \
 ```
