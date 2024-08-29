@@ -41,6 +41,20 @@ return {
 					end,
 					hidden = true,
 				},
+				{
+					"<leader>5",
+					function()
+						harpoon:list():select(5)
+					end,
+					hidden = true,
+				},
+				{
+					"<leader>6",
+					function()
+						harpoon:list():select(6)
+					end,
+					hidden = true,
+				},
 				{ "<leader>h", group = "harpoon", icon = { icon = "" } },
 				{
 					"<leader>ha",
