@@ -9,6 +9,7 @@ return {
 				{ "<leader>ccd", "<cmd>Copilot disable<cr>", desc = "Disable GitHub Copilot" },
 				{ "<leader>ccp", "<cmd>Copilot panel<cr>", desc = "Open GitHub Copilot panel" },
 			})
+      vim.cmd(':Copilot disable')
 		end,
 	},
 }
