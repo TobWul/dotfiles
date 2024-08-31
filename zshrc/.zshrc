@@ -13,6 +13,7 @@ export LC_ALL="en_US.UTF-8"
 export EDITOR="vim"
 export APOLLO_TELEMETRY_DISABLED=1
 
+alias vim="nvim"
 alias ezsh="code ~/.zshrc"
 alias szsh="source ~/.zshrc"
 alias eomz="code ~/.oh-my-zsh"
