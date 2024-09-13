@@ -12,12 +12,15 @@ return {
 			wk.add({
 				{ "<leader>f", group = "find" },
 				{ "<leader>fg", fzf.live_grep, desc = "Grep search" },
+				{ "<leader>fg", fzf.live_grep_visual, desc = "Grep search", mode = "x" },
 				{
 					"<leader>ff",
 					function()
-						fzf.files()
+						fzf.files({
+							delimiter = " ",
+						})
 					end,
-					desc = "Open telescope",
+					desc = "Search files",
 				},
 				{ "<leader><leader>", fzf.buffers, desc = "Search buffer", hidden = true },
 				{ "<leader>fn", "<cmd>:noh<cr>", desc = "Clear search" },

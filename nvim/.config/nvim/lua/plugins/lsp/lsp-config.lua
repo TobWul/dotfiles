@@ -64,7 +64,23 @@ return {
 				{ "<leader>c", group = "code" },
 				{ "gd", vim.lsp.buf.definition, desc = "Go to definition" },
 				{ "<leader>ch", vim.lsp.buf.hover, desc = "Hover" },
-				{ "<leader>ca", vim.lsp.buf.code_action, desc = "Code action", mode = { "n", "v" } },
+				{
+					"<leader>ca",
+					function()
+						require("fzf-lua").lsp_code_actions({
+							winopts = {
+								relative = "cursor",
+								width = 0.4,
+								height = 0.2,
+								row = 1,
+								preview = { hidden = "hidden" },
+							},
+							timeout = 1000,
+						})
+					end,
+					desc = "Code action",
+					mode = { "n", "v" },
+				},
 			})
 		end,
 	},
