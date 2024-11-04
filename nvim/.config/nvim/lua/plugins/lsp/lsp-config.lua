@@ -18,7 +18,7 @@ return {
 			local lspconfig = require("lspconfig")
 			local wk = require("which-key")
 			lspconfig.lua_ls.setup({})
-			lspconfig.tsserver.setup({
+			lspconfig.ts_ls.setup({
 				root_dir = require("lspconfig.util").root_pattern(".git"),
 			})
 			lspconfig.typos_lsp.setup({
