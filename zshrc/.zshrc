@@ -12,6 +12,8 @@ export LC_ALL="en_US.UTF-8"
 export EDITOR="nvim"
 
 alias vim="nvim"
+alias python="python3"
+alias pip="pip3"
 alias szsh="source ~/.zshrc"
 
 export NVM_DIR="$HOME/.nvm"
@@ -24,3 +26,28 @@ eval "$(starship init zsh)"
 source <(fzf --zsh)
 
 eval "$(zoxide init --cmd cd zsh)"
+
+# fnm
+FNM_PATH="/Users/tobiaswulvik/Library/Application Support/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="/Users/tobiaswulvik/Library/Application Support/fnm:$PATH"
+  eval "`fnm env`"
+fi
+
+eval "$(fnm env --use-on-cd --shell zsh)"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

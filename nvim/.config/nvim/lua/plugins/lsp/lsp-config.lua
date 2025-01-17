@@ -3,7 +3,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls", "pyright" },
+				ensure_installed = { "lua_ls", "ts_ls", "tailwindcss", "emmet_ls", "pyright", "css_lsp" },
 			})
 		end,
 	},
@@ -19,6 +19,8 @@ return {
 			local wk = require("which-key")
 			lspconfig.lua_ls.setup({})
 			lspconfig.tsserver.setup({
+			lspconfig.css_lsp.setup({})
+			lspconfig.ts_ls.setup({
 				root_dir = require("lspconfig.util").root_pattern(".git"),
 			})
 			lspconfig.typos_lsp.setup({

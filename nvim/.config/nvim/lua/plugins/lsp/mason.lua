@@ -15,6 +15,7 @@ return {
 					"markdownlint", -- markdown linter
 					"typos-lsp", -- spell checker
 					"darker", -- python formatter
+					"stylelint",
 				},
 			})
 		end,
