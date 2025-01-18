@@ -18,7 +18,11 @@ return {
 			-- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
 			-- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
 			-- See the full "keymap" documentation for information on defining your own keymap.
-			keymap = { preset = "default" },
+			keymap = {
+				preset = "super-tab",
+				["<c-k>"] = { "select_prev", "fallback" },
+				["<c-j>"] = { "select_next", "fallback" },
+			},
 
 			appearance = {
 				-- Sets the fallback highlight groups to nvim-cmp's highlight groups
@@ -47,7 +51,7 @@ return {
 			-- Default list of enabled providers defined so that you can extend it
 			-- elsewhere in your config, without redefining it, due to `opts_extend`
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer", "codecompanion" },
+				default = { "lsp", "path", "snippets", "buffer" },
 			},
 		},
 		opts_extend = { "sources.default" },
