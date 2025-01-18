@@ -13,6 +13,7 @@ return {
 				{ "<leader>f", group = "find" },
 				{ "<leader>fg", fzf.live_grep, desc = "Grep search" },
 				{ "<leader>fg", fzf.live_grep_visual, desc = "Grep search", mode = "x" },
+				{ "<leader>fu", "<cmd>FzfLua lsp_incoming_calls<cr>", desc = "Search used" },
 				{
 					"<leader>ff",
 					function()

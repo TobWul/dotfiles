@@ -3,6 +3,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="kolo"
 export ZSH_DOTENV_FILE=.env.local
 export PATH=$(brew --prefix)/opt/python@3.10/libexec/bin:$PATH
+export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
 export LC_ALL="en_US.UTF-8"
 
 [[ ! -f $ZSH/oh-my-zsh.sh ]] || source $ZSH/oh-my-zsh.sh
@@ -15,6 +16,7 @@ alias vim="nvim"
 alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
+alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

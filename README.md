@@ -18,3 +18,5 @@ brew install \
   ripgrep \
   fd
 ```
+
+## How to symlink
