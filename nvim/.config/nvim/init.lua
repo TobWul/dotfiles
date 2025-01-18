@@ -18,7 +18,6 @@ require("keymaps")
 require("lazy").setup({
 	{ import = "plugins" },
 	{ import = "plugins.code" },
-	{ import = "plugins.git" },
 	{ import = "plugins.lsp" },
 	{ import = "plugins.search" },
 	{ import = "plugins.navigation" },

@@ -3,7 +3,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "tailwindcss", "emmet_ls", "pyright", "css_lsp" },
+				ensure_installed = { "lua_ls", "ts_ls", "tailwindcss", "emmet_ls", "pyright", "css-lsp" },
 			})
 		end,
 	},
@@ -17,8 +17,8 @@ return {
 		config = function()
 			local lspconfig = require("lspconfig")
 			local wk = require("which-key")
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			lspconfig.lua_ls.setup({})
-			lspconfig.tsserver.setup({
 			lspconfig.css_lsp.setup({})
 			lspconfig.ts_ls.setup({
 				root_dir = require("lspconfig.util").root_pattern(".git"),
@@ -35,8 +35,6 @@ return {
 					diagnosticSeverity = "Error",
 				},
 			})
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,
