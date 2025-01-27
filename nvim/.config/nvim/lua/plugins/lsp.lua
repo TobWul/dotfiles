@@ -24,7 +24,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "tailwindcss", "emmet_ls", "pyright", "cssls" },
+				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls", "pyright", "cssls" },
 			})
 		end,
 	},
@@ -41,14 +41,7 @@ return {
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			lspconfig.lua_ls.setup({})
 			lspconfig.cssls.setup({})
-			lspconfig.ts_ls.setup({})
-			lspconfig.typos_lsp.setup({
-				cmd_env = { RUST_LOG = "error" },
-				init_options = {
-					config = "~/code/typos-lsp/crates/typos-lsp/tests/typos.toml",
-					diagnosticSeverity = "Error",
-				},
-			})
+			lspconfig.tsserver.setup({})
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,

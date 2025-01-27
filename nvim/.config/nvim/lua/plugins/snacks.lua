@@ -104,6 +104,10 @@ return {
 						Snacks.debug.backtrace()
 					end
 					vim.print = _G.dd -- Override print to use snacks for `:=` command
+
+					-- Create some toggle mappings
+					Snacks.toggle.diagnostics():map("<leader>ud")
+					Snacks.toggle.dim():map("<leader>uD")
 				end,
 			})
 		end,
