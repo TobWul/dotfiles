@@ -18,10 +18,6 @@ vim.keymap.set("v", "J", "5gj")
 vim.keymap.set("n", "K", "5gk")
 vim.keymap.set("v", "K", "5gk")
 
--- Move lines up and down
-vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move Down" })
-vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move Up" })
-
 -- recenters the screen after jumping
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
@@ -41,14 +37,7 @@ vim.keymap.set("n", "D", '"+D')
 -- Disable Q, only messes with stuff
 vim.keymap.set("n", "Q", "<nop>")
 
+-- Save
+vim.keymap.set("n", "<leader>s", "<cmd>w<CR>")
+
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-
--- File handling
-vim.keymap.set("n", "<leader>qq", "<cmd>wqa<CR>", { desc = "Save and quit all" })
-vim.keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and quit current file" })
-vim.keymap.set("n", "<leader>s", "<cmd>w<CR>", { desc = "Save" })
-
--- lazy
-vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
--- Replace

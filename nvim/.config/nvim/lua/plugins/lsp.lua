@@ -1,9 +1,30 @@
 return {
 	{
+		"williamboman/mason.nvim",
+		dependencies = {
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+		},
+		config = function()
+			require("mason").setup()
+			local mason_tool_installer = require("mason-tool-installer")
+			mason_tool_installer.setup({
+				ensure_installed = {
+					"prettierd", -- prettier formatter
+					"stylua", -- lua formatter
+					"eslint_d", -- js linter
+					"markdownlint", -- markdown linter
+					"typos-lsp", -- spell checker
+					"darker", -- python formatter
+					"stylelint",
+				},
+			})
+		end,
+	},
+	{
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "tailwindcss", "emmet_ls", "pyright", "css-lsp" },
+				ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "emmet_ls", "pyright", "cssls" },
 			})
 		end,
 	},
@@ -19,30 +40,14 @@ return {
 			local wk = require("which-key")
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			lspconfig.lua_ls.setup({})
-			lspconfig.css_lsp.setup({})
-			lspconfig.ts_ls.setup({
-				root_dir = require("lspconfig.util").root_pattern(".git"),
-			})
-			lspconfig.typos_lsp.setup({
-				-- Logging level of the language server. Logs appear in :LspLog. Defaults to error.
-				cmd_env = { RUST_LOG = "error" },
-				init_options = {
-					-- Custom config. Used together with any workspace config files, taking precedence for
-					-- settings declared in both. Equivalent to the typos `--config` cli argument.
-					config = "~/code/typos-lsp/crates/typos-lsp/tests/typos.toml",
-					-- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
-					-- Defaults to error.
-					diagnosticSeverity = "Error",
-				},
-			})
+			lspconfig.cssls.setup({})
+			lspconfig.tsserver.setup({})
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,
 			})
 
-			-- Emmet configuration
 			lspconfig.emmet_ls.setup({
-				-- on_attach = on_attach,
 				capabilities = capabilities,
 				filetypes = {
 					"css",

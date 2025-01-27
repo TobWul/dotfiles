@@ -17,9 +17,4 @@ require("vim-config")
 require("keymaps")
 require("lazy").setup({
 	{ import = "plugins" },
-	{ import = "plugins.code" },
-	{ import = "plugins.lsp" },
-	{ import = "plugins.search" },
-	{ import = "plugins.navigation" },
-	{ import = "plugins.ui" },
 })
