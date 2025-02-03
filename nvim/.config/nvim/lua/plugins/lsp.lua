@@ -42,6 +42,18 @@ return {
 			lspconfig.lua_ls.setup({})
 			lspconfig.cssls.setup({})
 			lspconfig.tsserver.setup({})
+			lspconfig.tailwindcss.setup({
+				settings = {
+					tailwindCSS = {
+						experimental = {
+							classRegex = {
+								{ "cva\\(((?:[^()]|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+								{ "cx\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+							},
+						},
+					},
+				},
+			})
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,

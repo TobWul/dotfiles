@@ -7,7 +7,7 @@ return {
 		opts = {
 			animate = { enabled = true },
 			bigfile = { enabled = true },
-			dashboard = { enabled = true },
+			dashboard = { preset = { header = [[]] } },
 			indent = { enabled = true },
 			input = { enabled = true },
 			notifier = {
