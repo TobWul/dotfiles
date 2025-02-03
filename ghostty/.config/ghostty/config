@@ -48,3 +48,4 @@ theme = CutiePro
 background-opacity = 0.9
 background-blur = true
 window-decoration=none
+font-size = 14
