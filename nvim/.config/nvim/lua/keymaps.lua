@@ -41,3 +41,22 @@ vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader>s", "<cmd>w<CR>")
 
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+
+-- Replace visually selected text in substitute command
+vim.keymap.set("x", "<leader>cr", function()
+	-- Yank the visually selected text into the v register
+	vim.cmd('normal! "vy')
+	-- Get the yanked text from the v register
+	local selected_text = vim.fn.getreg("v")
+	-- Escape special characters to prevent syntax issues
+	selected_text = vim.fn.escape(selected_text, "\\/.*$^~[]")
+
+	-- Build the substitution command with /g at the end
+	local cmd = ":%s/" .. selected_text .. "//g"
+
+	-- Feed the command to the command line
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(cmd, true, false, true), "n", false)
+
+	-- Move the cursor left twice to position it between the slashes
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
+end, { desc = "Substitute Visually Selected Text with Global Flag" })
