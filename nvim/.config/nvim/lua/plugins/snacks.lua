@@ -5,7 +5,12 @@ return {
 		lazy = false,
 		---@type snacks.Config
 		opts = {
-			animate = { enabled = true },
+			animate = {
+				enabled = true,
+				duration = 20, -- ms per step
+				easing = "outQuad",
+				fps = 60, -- frames per second. Global setting for all animations
+			},
 			bigfile = { enabled = true },
 			dashboard = { preset = { header = [[]] } },
 			indent = { enabled = true },
@@ -15,7 +20,13 @@ return {
 				timeout = 3000,
 			},
 			quickfile = { enabled = true },
-			scroll = { enabled = false },
+			scroll = {
+				enabled = true,
+				animate = {
+					duration = { step = 15, total = 150 },
+					easing = "outQuad",
+				},
+			},
 			statuscolumn = { enabled = true },
 			terminal = { enabled = false },
 			words = { enabled = false },

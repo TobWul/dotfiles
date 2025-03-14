@@ -54,7 +54,7 @@ return {
 						prompts = {
 							{
 								role = "system",
-								content = [[You are a technical documentation expert specializing in React design systems with knowledge about code and UX. 
+								content = [[You are a technical writer specializing in React design systems with knowledge about code and UX. 
 Your task is to generate comprehensive JSDoc documentation that follows these rules:
 - Write a very brief sentence about what this component is.
 - Write about recommendations for usage with a focus on helping developers think about UX.
