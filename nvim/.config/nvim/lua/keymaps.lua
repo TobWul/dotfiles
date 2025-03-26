@@ -60,3 +60,21 @@ vim.keymap.set("x", "<leader>cr", function()
 	-- Move the cursor left twice to position it between the slashes
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
 end, { desc = "Substitute Visually Selected Text with Global Flag" })
+
+-- Console log selected text
+vim.keymap.set("v", "<leader>cl", function()
+	-- Yank the visually selected text into the v register
+	vim.cmd('normal! "vy')
+	-- Get the yanked text from the v register
+	local selected_text = vim.fn.getreg("v")
+	-- Escape special characters to prevent syntax issues
+	selected_text = vim.fn.escape(selected_text, "\\/.*$^~[]")
+
+	-- Get the line number of the end of visual selection
+	local line_number = vim.fn.line("'>")
+
+	-- Create console.log statement
+	local log_statement = string.format("console.log(%s);", selected_text)
+
+	vim.api.nvim_buf_set_lines(0, line_number, line_number, false, { log_statement })
+end, { desc = "Console log selected text" })

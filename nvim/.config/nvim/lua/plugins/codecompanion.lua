@@ -22,7 +22,7 @@ return {
 					anthropic = function()
 						return require("codecompanion.adapters").extend("anthropic", {
 							env = {
-								api_key = "cmd:op read op://personal/LLM/credential --no-newline",
+								api_key = "cmd:op read op://personal/Claude/credential --no-newline",
 							},
 						})
 					end,
