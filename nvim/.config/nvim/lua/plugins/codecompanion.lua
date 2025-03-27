@@ -12,17 +12,29 @@ return {
 				},
 				strategies = {
 					chat = {
-						adapter = "anthropic",
+						adapter = "gemini",
 					},
 					inline = {
-						adapter = "anthropic",
+						adapter = "gemini",
 					},
 				},
 				adapters = {
 					anthropic = function()
 						return require("codecompanion.adapters").extend("anthropic", {
 							env = {
-								api_key = "cmd:op read op://personal/LLM/credential --no-newline",
+								api_key = "cmd:op read op://personal/Claude/credential --no-newline",
+							},
+						})
+					end,
+					gemini = function()
+						return require("codecompanion.adapters").extend("gemini", {
+							schema = {
+								model = {
+									default = "gemini-2.0-flash", -- 'gemini-1.5-pro-exp-0827'
+								},
+							},
+							env = {
+								api_key = "cmd:op read op://personal/Gemini/credential --no-newline",
 							},
 						})
 					end,
