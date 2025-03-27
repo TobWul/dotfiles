@@ -24,6 +24,7 @@ return {
 					desc = "Search files",
 				},
 				{ "<leader><leader>", fzf.buffers, desc = "Search buffer", hidden = true },
+				{ "<leader>fq", "<cmd>FzfLua quickfix<cr>", desc = "Search quickfix lists" },
 				{ "<leader>fn", "<cmd>:noh<cr>", desc = "Clear search" },
 				{
 					"<leader>fc",
