@@ -1,0 +1,42 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "opencode",
+  "autoupdate": true,
+  "share": "disabled",
+  "model": "github-copilot/gpt-5",
+  "mcp": {
+    "linear": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/sse"]
+    },
+    "figma": {
+      "enabled": true,
+      "type": "remote",
+      "url": "http://127.0.0.1:3845/sse"
+    },
+    "notion": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.notion.com/sse"]
+    }
+  },
+  "tools": {
+    "linear": false,
+    "figma": false,
+    "notion": false
+  },
+  "agent": {
+    "design": {
+      "tools": {
+        "figma": true
+      }
+    },
+    "plan": {
+      "tools": {
+        "notion": true,
+        "linear": true
+      }
+    }
+  }
+}

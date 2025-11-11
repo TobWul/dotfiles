@@ -1,0 +1,37 @@
+return {
+	{
+		"davidmh/mdx.nvim",
+		config = true,
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+	},
+	{ -- Highlight, edit, and navigate code
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		main = "nvim-treesitter.configs",
+		event = { "VeryLazy" },
+		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+		opts = {
+			ensure_installed = {
+				"bash",
+				"diff",
+				"html",
+				"lua",
+				"luadoc",
+				"markdown",
+				"markdown_inline",
+				"query",
+				"vim",
+				"vimdoc",
+				"typescript",
+				"javascript",
+				"css",
+				"scss",
+				"regex",
+				"fsharp",
+			},
+			auto_install = true,
+			highlight = { enable = true },
+			indent = { enable = true },
+		},
+	},
+}

@@ -1,0 +1,71 @@
+[include]
+	path = ~/dotfiles/delta/themes/catppuccin-theme.gitconfig
+
+[user]
+        name = Tobias Wulvik
+        email = tobias.wulvik@gmail.com
+[column]
+        ui = auto
+[branch]
+        sort = -committerdate
+[tag]
+        sort = version:refname
+[init]
+        defaultBranch = main
+[diff]
+        algorithm = histogram
+        colorMoved = plain
+        mnemonicPrefix = true
+        renames = true
+[push]
+        default = simple
+        autoSetupRemote = true
+        followTags = true
+[fetch]
+        prune = true
+        pruneTags = true
+        all = true
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[commit]
+  gpgsign = true
+
+
+# why the hell not?
+
+[help]
+        autocorrect = prompt
+[commit]
+        verbose = true
+[rerere]
+        enabled = true
+        autoupdate = true
+[core]
+        excludesfile = ~/.gitignore
+        pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+ 
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    features = decorations
+    light = false
+    tabs = 2
+    line-numbers = true
+    navigate = true
+    hyperlinks = true
+	  features = catppuccin-mocha
+
+[rebase]
+        autoSquash = true
+        autoStash = true
+        updateRefs = true
+
+[pull]
+        rebase = true
+

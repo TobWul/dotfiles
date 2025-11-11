@@ -1,0 +1,7 @@
+{
+  "Test Snippet": {
+    "prefix": "test",
+    "body": ["console.log('Hello from snippet!')"],
+    "description": "Test snippet"
+  }
+}

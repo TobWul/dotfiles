@@ -1,0 +1,20 @@
+{
+  "nativeMCPServers": [
+    
+  ],
+  "mcpServers": {
+    "github.com/GLips/Figma-Context-MCP": {
+      "custom_instructions": {
+        "disabled": false
+      },
+      "command": "npx",
+      "disabled": false,
+      "args": [
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=cmd:op read op://personal/FigmaPersonalAccessToken/credential --no-newline",
+        "--stdio"
+      ]
+    }
+  }
+}
