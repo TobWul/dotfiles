@@ -1,14 +1,25 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "theme": "opencode",
+  "theme": "catppuccin",
   "autoupdate": true,
-  "share": "disabled",
-  "model": "github-copilot/gpt-5",
+  "model": "github-copilot/claude-haiku-4.5",
+  "permission": {
+    "bash": {
+      "*": "deny",
+      "git status": "allow",
+      "git diff": "allow",
+      "git fetch": "allow",
+      "npm *": "allow",
+      "pnpm *": "allow",
+      "ls *": "allow",
+      "pwd": "allow"
+    }
+  },
   "mcp": {
     "linear": {
       "enabled": true,
       "type": "local",
-      "command": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/sse"]
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/mcp"]
     },
     "figma": {
       "enabled": true,
@@ -25,18 +36,5 @@
     "linear": false,
     "figma": false,
     "notion": false
-  },
-  "agent": {
-    "design": {
-      "tools": {
-        "figma": true
-      }
-    },
-    "plan": {
-      "tools": {
-        "notion": true,
-        "linear": true
-      }
-    }
   }
 }
