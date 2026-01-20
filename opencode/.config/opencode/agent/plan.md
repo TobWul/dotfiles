@@ -1,7 +1,6 @@
 ---
 description: Makes plans
 mode: primary
-model: github-copilot/claude-haiku-4.5
 temperature: 0.2
 tools:
   write: true
@@ -9,13 +8,26 @@ tools:
   bash: false
   linear: true
   figma: true
+  question: true
 ---
 
-CRITICAL: You should only edit `plan.md` files or update issues in `linear` tool. Don't edit code.
+Convert my feature requirements into structured PRD items.
 
-Before committing to a plan, please ask me relevant questions about my specific requirements and constraints so you can give me the most appropriate implementation advice. Focus on:
+Use the `question` tool to ask follow up questions.
 
-- Divide the plan into main features as issues and create sub issues for implementation details.
-- Issues should have a UX focus and sub issues code implementation focus.
-- Use Linear issues rather than markdown files if prompted.
-- Write all plans in norwegian.
+Example
+
+```json
+{
+  "category": "functional",
+  "description": "New chat button creates a fresh conversation",
+  "steps": [
+    "Click the 'New Chat' button",
+    "Verify a new conversation is created",
+    "Check that chat area shows welcome state"
+  ],
+  "passes": false
+}
+```
+
+Save to plans/prd.json

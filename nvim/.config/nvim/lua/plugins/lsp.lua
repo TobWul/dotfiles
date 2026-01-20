@@ -111,6 +111,8 @@ return {
 					--  To jump back, press <C-t>.
 					map("<leader>ch", vim.lsp.buf.hover, "[C]ode [H]over")
 
+					map("<leader>cc", vim.lsp.buf.rename, "[C]ode [C]hange", { "n", "x" })
+
 					map("<leader>cl", vim.diagnostic.open_float, "[C]ode open [Lint]")
 
 					-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
@@ -225,12 +227,7 @@ return {
 				tailwindcss = {
 					settings = {
 						tailwindCSS = {
-							experimental = {
-								classRegex = {
-									{ "cva\\(((?:[^()]|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
-									{ "cx\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
-								},
-							},
+							classFunctions = { "cva", "cx" },
 						},
 					},
 				},

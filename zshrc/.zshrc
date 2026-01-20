@@ -47,6 +47,7 @@ alias ta="tmux attach"
 alias tk="tmux kill-session -t"
 alias tl="tmux list-sessions"
 alias ai="opencode"
+alias ralph-once="opencode run --command ralph-once --agent ralph"
 alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
@@ -94,3 +95,6 @@ _conda_lazy_load() {
   fi
 }
 conda() { _conda_lazy_load; conda "$@"; }
+
+# opencode
+export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
