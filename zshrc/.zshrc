@@ -1,45 +1,57 @@
 # -----------------------------------------------------------------------------
-# Core (Oh My Zsh) - load early for plugins, but keep light
+# Zinit Plugin Manager
 # -----------------------------------------------------------------------------
-export ZSH="$HOME/.oh-my-zsh"
-[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+
+source "${ZINIT_HOME}/zinit.zsh"
 
 # -----------------------------------------------------------------------------
-# Environment Variables / Paths (NO subshells in startup path building)
+# Theme
 # -----------------------------------------------------------------------------
-export ZSH_THEME="kolo"
-export ZSH_DOTENV_FILE=.env.local
-export EDITOR="nvim"
-export LC_ALL="en_US.UTF-8"
-export XDG_CONFIG_HOME="$HOME/.config"
-export NVM_DIR="$HOME/.nvm"
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-# bun completions
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+# Load pure theme
+zinit ice pick"async.zsh" src"pure.zsh" # with zsh-async library that's bundled with it.
+zinit light sindresorhus/pure
 
-# Static paths (adjust if different on Intel)
-HOMEBREW_PREFIX="/opt/homebrew"
-[ -d "$HOMEBREW_PREFIX" ] && PATH="$HOMEBREW_PREFIX/opt/python@3.10/libexec/bin:$PATH"
-[ -d "/opt/homebrew/Caskroom/miniconda/base/bin" ] && PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-[ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
-# Poetry and pipx shims
-[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
-[ -d "$HOME/Library/Python/3.13/bin" ] && PATH="$HOME/Library/Python/3.13/bin:$PATH"
-export PATH
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
-# Poetry completions
-fpath+=~/.zfunc
+# Load completions
 autoload -Uz compinit && compinit
 
-# Netlin
-export USERPROFILE="~/data"
-
-export EDITOR="nvim"
 # -----------------------------------------------------------------------------
-# Aliases
+# History
+# -----------------------------------------------------------------------------
+
+# History
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# -----------------------------------------------------------------------------
+# Completion styling
+# -----------------------------------------------------------------------------
+alias ls='ls --color'
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+
+# -----------------------------------------------------------------------------
+# Alias
 # -----------------------------------------------------------------------------
 alias vim="nvim"
 alias lg="lazygit"
@@ -52,49 +64,52 @@ alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
 alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
+alias nvm="fnm"
 
 # -----------------------------------------------------------------------------
 # Key Bindings
 # -----------------------------------------------------------------------------
-bindkey -s ^f "tmux-sessionizer\n"
 
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+
+# -----------------------------------------------------------------------------
+# Environment Variables / Paths (NO subshells in startup path building)
+# -----------------------------------------------------------------------------
+export EDITOR="nvim"
+export LC_ALL="en_US.UTF-8"
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+# bun completions
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# Static paths (adjust if different on Intel)
+HOMEBREW_PREFIX="/opt/homebrew"
+[ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
+
+export PATH
+
+# Netlin
+export USERPROFILE="~/data"
+
+export EDITOR="nvim"
 
 # -----------------------------------------------------------------------------
 # Tools (lightweight first)
 # -----------------------------------------------------------------------------
+
+# Zoxide
 eval "$(zoxide init --cmd cd zsh)"
-# Prompt (single framework only)
-eval "$(starship init zsh)"
 
-# -----------------------------------------------------------------------------
-# Lazy Load: NVM (and node/npm/npx/pnpm/yarn wrappers)
-# -----------------------------------------------------------------------------
-_nvm_lazy_load() {
-  unset -f nvm node npm npx pnpm yarn bun _nvm_lazy_load
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-}
-nvm() { _nvm_lazy_load; nvm "$@"; }
-node() { _nvm_lazy_load; node "$@"; }
-npm() { _nvm_lazy_load; npm "$@"; }
-npx() { _nvm_lazy_load; npx "$@"; }
-pnpm() { _nvm_lazy_load; pnpm "$@"; }
-yarn() { _nvm_lazy_load; yarn "$@"; }
-bun() { _nvm_lazy_load; bun "$@"; }
+# Tmux
+bindkey -s ^f "tmux-sessionizer\n"
 
-# -----------------------------------------------------------------------------
-# Lazy Load: Conda (only when 'conda' first used)
-# -----------------------------------------------------------------------------
-_conda_lazy_load() {
-  unset -f conda _conda_lazy_load
-  if [ -f "$HOMEBREW_PREFIX/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-    . "$HOMEBREW_PREFIX/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-  elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    . "$HOME/miniconda3/etc/profile.d/conda.sh"
-  fi
-}
-conda() { _conda_lazy_load; conda "$@"; }
+# FZF
+source <(fzf --zsh)
 
 # opencode
 export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
+
+# Fnm
+eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"

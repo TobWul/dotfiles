@@ -13,13 +13,37 @@ fi
 selected_name=$(basename "$selected" | tr . _)
 tmux_running=$(pgrep tmux)
 
+setup_session_windows() {
+    local session=$1
+    local dir=$2
+
+    # Rename the default window to "Code" and run nvim
+    tmux rename-window -t "$session:1" "Code"
+    tmux send-keys -t "$session:1" "nvim" Enter
+
+    # Create "Server" window with 3 equal vertical panes
+    tmux new-window -t "$session" -n "Server" -c "$dir"
+    tmux split-window -t "$session:Server" -h -c "$dir"
+    tmux split-window -t "$session:Server" -h -c "$dir"
+    tmux select-layout -t "$session:Server" even-horizontal
+
+    # Create "AI" window and run ai
+    tmux new-window -t "$session" -n "AI" -c "$dir"
+    tmux send-keys -t "$session:AI" "ai" Enter
+
+    # Focus back on the Code window
+    tmux select-window -t "$session:1"
+}
+
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
     tmux new-session -s $selected_name -c $selected
+    setup_session_windows "$selected_name" "$selected"
     exit 0
 fi
 
 if ! tmux has-session -t=$selected_name 2> /dev/null; then
     tmux new-session -ds $selected_name -c $selected
+    setup_session_windows "$selected_name" "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
