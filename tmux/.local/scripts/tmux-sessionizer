@@ -1,18 +1,52 @@
 #!/usr/bin/env bash
 
+WORKTREE_HOME="$HOME/.worktrees"
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(find ~/git -mindepth 1 -maxdepth 1 -type d | fzf)
+    selected=$({
+        find ~/git -mindepth 1 -maxdepth 1 -type d
+        find "$WORKTREE_HOME" -mindepth 2 -maxdepth 2 -type d 2>/dev/null
+    } | fzf)
 fi
 
 if [[ -z $selected ]]; then
     exit 0
 fi
 
-selected_name=$(basename "$selected" | tr . _)
+# --- Session naming ---
+# For worktrees, extract the branch name from the path structure:
+#   ~/.worktrees/<repo>/<branch>[/subdir] -> use <branch> for naming
+# Then try to extract an issue ID (e.g. NET-1149) from the branch name.
+# For regular projects, use the directory basename with dots replaced by underscores.
+is_worktree=false
+if [[ "$selected" == "$WORKTREE_HOME"/* ]]; then
+    is_worktree=true
+fi
+
+extract_issue_id() {
+    local name="$1"
+    if [[ "$name" =~ ([A-Za-z]{2,5})-([0-9]+) ]]; then
+        echo "${BASH_REMATCH[1]^^}-${BASH_REMATCH[2]}"
+    else
+        echo ""
+    fi
+}
+
+if $is_worktree; then
+    # Strip WORKTREE_HOME prefix, then grab the second path component (the branch)
+    rel_path="${selected#"$WORKTREE_HOME"/}"
+    branch_name=$(echo "$rel_path" | cut -d/ -f2 | tr . _)
+    issue_id=$(extract_issue_id "$branch_name")
+    selected_name="${issue_id:-$branch_name}"
+else
+    selected_name=$(basename "$selected" | tr . _)
+fi
+
 tmux_running=$(pgrep tmux)
 
+# --- Standard project layout: Code (nvim) / Server (3 panes) / AI (opencode) ---
 setup_session_windows() {
     local session=$1
     local dir=$2
@@ -35,19 +69,48 @@ setup_session_windows() {
     tmux select-window -t "$session:1"
 }
 
+# --- Worktree layout: AI (opencode --agent prd) / Code (nvim) / Shell ---
+setup_worktree_windows() {
+    local session=$1
+    local dir=$2
+
+    # Rename the default window to "AI" and run opencode
+    tmux rename-window -t "$session:1" "Code"
+    tmux send-keys -t "$session:1" "nvim" Enter
+
+    # Create "Code" window and run nvim
+    tmux new-window -t "$session" -n "AI" -c "$dir"
+    tmux send-keys -t "$session:AI" "opencode --agent prd" Enter
+
+    # Create "Shell" window
+    tmux new-window -t "$session" -n "Server" -c "$dir"
+
+    # Focus back on the Code window
+    tmux select-window -t "$session:1"
+}
+
+# --- Pick the right layout ---
+setup_windows() {
+    if $is_worktree; then
+        setup_worktree_windows "$@"
+    else
+        setup_session_windows "$@"
+    fi
+}
+
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s $selected_name -c $selected
-    setup_session_windows "$selected_name" "$selected"
+    tmux new-session -s "$selected_name" -c "$selected"
+    setup_windows "$selected_name" "$selected"
     exit 0
 fi
 
-if ! tmux has-session -t=$selected_name 2> /dev/null; then
-    tmux new-session -ds $selected_name -c $selected
-    setup_session_windows "$selected_name" "$selected"
+if ! tmux has-session -t="$selected_name" 2> /dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected"
+    setup_windows "$selected_name" "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
-    tmux attach -t $selected_name
+    tmux attach -t "$selected_name"
 else
-    tmux switch-client -t $selected_name
+    tmux switch-client -t "$selected_name"
 fi

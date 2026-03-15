@@ -1,0 +1,76 @@
+#!/bin/bash
+set -e
+
+VERSION="1.0.1"
+DEFAULT_ITERATIONS=1
+
+# --- Help ---
+show_help() {
+  cat <<EOF
+ralph v${VERSION} - Run opencode worker loop against Linear issues
+
+Usage:
+  ralph --issue <linear-id> [--iterations <n>]
+  ralph -i <linear-id> [-n <n>]
+
+Options:
+  -i, --issue       Linear issue, project, or cycle ID (required)
+  -n, --iterations  Max iterations before stopping (default: ${DEFAULT_ITERATIONS})
+  -h, --help        Show this help message
+  -v, --version     Show version
+
+Examples:
+  ralph --issue ENG-123
+  ralph -i ENG-123 -n 5
+EOF
+  exit 0
+}
+
+# --- Parse flags ---
+ISSUE=""
+ITERATIONS=$DEFAULT_ITERATIONS
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -i|--issue)      ISSUE="$2"; shift 2 ;;
+    -n|--iterations) ITERATIONS="$2"; shift 2 ;;
+    -h|--help)       show_help ;;
+    -v|--version)    echo "ralph v${VERSION}"; exit 0 ;;
+    *)
+      echo "Error: Unknown option '$1'"
+      echo ""
+      echo "Run 'ralph --help' for usage."
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$ISSUE" ]; then
+  echo "Error: --issue is required."
+  echo ""
+  echo "Run 'ralph --help' for usage."
+  exit 1
+fi
+
+# --- Run ---
+echo "Starting worker loop for $ISSUE (max $ITERATIONS iterations)"
+echo "Press ^C to stop"
+echo ""
+
+TMPFILE=$(mktemp)
+trap "rm -f $TMPFILE" EXIT
+
+for ((i=1; i<=ITERATIONS; i++)); do
+  echo "--- Iteration $i/$ITERATIONS ---"
+
+  opencode run --command worker-loop --agent worker "Linear issue: $ISSUE" 2>&1 | tee "$TMPFILE"
+
+  echo ""
+
+  if grep -q "<promise>COMPLETE</promise>" "$TMPFILE"; then
+    echo "All issues complete after $i iterations."
+    exit 0
+  fi
+done
+
+echo "Reached max iterations ($ITERATIONS). Run again to continue."

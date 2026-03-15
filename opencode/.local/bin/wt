@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION="1.0.0"
+WORKTREE_HOME="$HOME/.worktrees"
+
+# --- Profiles ---
+# Each profile defines:
+#   symlinks     - files/dirs to symlink from main checkout (space-separated)
+#   install_dir  - subdirectory to detect package manager and run install in (relative to worktree root)
+#   work_dir     - subdirectory to use as the working directory (relative to worktree root)
+#
+# Package manager is auto-detected from lockfiles (bun.lockb, pnpm-lock.yaml, yarn.lock, package-lock.json)
+
+profile_netlin4() {
+  SYMLINKS="weblin/.env"
+  INSTALL_DIR="weblin"
+  WORK_DIR="weblin"
+}
+
+profile_default() {
+  SYMLINKS=".env"
+  INSTALL_DIR=""
+  WORK_DIR=""
+}
+
+# Detect package manager from lockfiles in a directory
+detect_pkg_manager() {
+  local dir="$1"
+  if [ -f "$dir/bun.lockb" ] || [ -f "$dir/bun.lock" ]; then
+    echo "bun install"
+  elif [ -f "$dir/pnpm-lock.yaml" ]; then
+    echo "pnpm install"
+  elif [ -f "$dir/yarn.lock" ]; then
+    echo "yarn install"
+  elif [ -f "$dir/package-lock.json" ]; then
+    echo "npm install"
+  elif [ -f "$dir/package.json" ]; then
+    echo "npm install"
+  else
+    echo ""
+  fi
+}
+
+# --- Detect profile from repo name ---
+detect_profile() {
+  local repo_name="$1"
+  case "$repo_name" in
+    netlin4) profile_netlin4 ;;
+    *)       profile_default ;;
+  esac
+}
+
+# --- Helpers ---
+repo_root() {
+  git rev-parse --show-toplevel 2>/dev/null || {
+    echo "Error: Not inside a git repository" >&2
+    exit 1
+  }
+}
+
+repo_name() {
+  basename "$(repo_root)"
+}
+
+worktree_base() {
+  echo "$WORKTREE_HOME/$(repo_name)"
+}
+
+worktree_dir() {
+  echo "$(worktree_base)/$1"
+}
+
+# Extract issue ID from branch name (e.g. tobias-net-1149-fix-thing -> NET-1149)
+extract_issue_id() {
+  local branch="$1"
+  if [[ "$branch" =~ ([A-Za-z]{2,5})-([0-9]+) ]]; then
+    echo "${BASH_REMATCH[1]^^}-${BASH_REMATCH[2]}"
+  else
+    echo ""
+  fi
+}
+
+# --- Help ---
+show_help() {
+  cat <<EOF
+wt v${VERSION} - Git worktree manager
+
+Usage:
+  wt create <branch>    Create a worktree, install deps, open tmux + opencode
+  wt remove <branch>    Remove the worktree for <branch>
+  wt list               List all worktrees for the current repo
+  wt cd <branch>        Print the worktree path (use with: cd \$(wt cd <branch>))
+  wt --help             Show this help message
+  wt --version          Show version
+
+Worktrees are stored in ~/.worktrees/<repo-name>/<branch>/
+
+Profiles:
+  The script auto-detects the repo and applies a matching profile that
+  controls which files are symlinked, what install command runs, and
+  which subdirectory is used as the working directory.
+
+  Currently supported profiles:
+    netlin4   - Symlinks weblin/.env and tiff/, installs deps in weblin/
+    default   - Symlinks .env from the repo root
+
+  Package manager is auto-detected from lockfiles (bun, pnpm, yarn, npm).
+
+Branch resolution:
+  1. If the branch exists locally, use it
+  2. If it exists on origin, track it
+  3. Otherwise, create a new branch from main
+EOF
+  exit 0
+}
+
+# --- Commands ---
+cmd_create() {
+  local branch="$1"
+  local root
+  root="$(repo_root)"
+  local name
+  name="$(repo_name)"
+  local wt_dir
+  wt_dir="$(worktree_dir "$branch")"
+
+  detect_profile "$name"
+
+  if [ -d "$wt_dir" ]; then
+    echo "Error: Worktree already exists at $wt_dir"
+    exit 1
+  fi
+
+  # Create the base directory if needed
+  mkdir -p "$(worktree_base)"
+
+  # Branch resolution
+  if git -C "$root" show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null; then
+    echo "Creating worktree for existing local branch: $branch"
+    git -C "$root" worktree add "$wt_dir" "$branch"
+  elif git -C "$root" show-ref --verify --quiet "refs/remotes/origin/$branch" 2>/dev/null; then
+    echo "Creating worktree for remote branch: origin/$branch"
+    git -C "$root" worktree add "$wt_dir" "$branch"
+  else
+    echo "Creating worktree with new branch: $branch (from main)"
+    git -C "$root" worktree add -b "$branch" "$wt_dir" main
+    echo "Pushing $branch to origin and setting upstream..."
+    git -C "$wt_dir" push -u origin "$branch"
+  fi
+
+  # Symlink files/dirs from main checkout
+  for item in $SYMLINKS; do
+    local src="$root/$item"
+    local dst="$wt_dir/$item"
+
+    if [[ "$item" == */ ]]; then
+      # Directory symlink: remove the trailing slash for the target
+      item="${item%/}"
+      src="$root/$item"
+      dst="$wt_dir/$item"
+      if [ -d "$src" ]; then
+        rm -rf "$dst"
+        ln -sf "$src" "$dst"
+        echo "Symlinked $item/ from main checkout"
+      else
+        echo "Warning: Directory $src not found, skipping"
+      fi
+    else
+      # File symlink
+      if [ -f "$src" ]; then
+        mkdir -p "$(dirname "$dst")"
+        ln -sf "$src" "$dst"
+        echo "Symlinked $item from main checkout"
+      else
+        echo "Warning: File $src not found, skipping"
+      fi
+    fi
+  done
+
+  # Auto-detect and run package manager install
+  local install_path="$wt_dir"
+  [ -n "$INSTALL_DIR" ] && install_path="$wt_dir/$INSTALL_DIR"
+
+  local install_cmd
+  install_cmd="$(detect_pkg_manager "$install_path")"
+  if [ -n "$install_cmd" ]; then
+    local display_dir="${INSTALL_DIR:-.}"
+    echo "Running '$install_cmd' in $display_dir/..."
+    (cd "$install_path" && $install_cmd)
+  fi
+
+  echo ""
+  echo "Worktree ready at: $wt_dir"
+
+  # Create a full tmux session via tmux-sessionizer (handles layout + attach)
+  echo "Creating tmux session for worktree..."
+  tmux-sessionizer "$wt_dir"
+}
+
+cmd_remove() {
+  local branch="$1"
+  local root
+  root="$(repo_root)"
+  local wt_dir
+  wt_dir="$(worktree_dir "$branch")"
+
+  if [ ! -d "$wt_dir" ]; then
+    echo "Error: No worktree found at $wt_dir"
+    exit 1
+  fi
+
+  git -C "$root" worktree remove "$wt_dir"
+  echo "Removed worktree: $branch"
+
+  # Clean up empty base directory
+  local base
+  base="$(worktree_base)"
+  if [ -d "$base" ] && [ -z "$(ls -A "$base")" ]; then
+    rmdir "$base"
+  fi
+}
+
+cmd_list() {
+  local root
+  root="$(repo_root)"
+  git -C "$root" worktree list
+}
+
+cmd_cd() {
+  local branch="$1"
+  local root
+  root="$(repo_root)"
+  local name
+  name="$(repo_name)"
+  local wt_dir
+  wt_dir="$(worktree_dir "$branch")"
+
+  detect_profile "$name"
+
+  local work_path="$wt_dir"
+  [ -n "$WORK_DIR" ] && work_path="$wt_dir/$WORK_DIR"
+
+  if [ ! -d "$work_path" ]; then
+    echo "Error: No worktree found at $work_path" >&2
+    exit 1
+  fi
+
+  echo "$work_path"
+}
+
+# --- Main ---
+if [ $# -lt 1 ]; then
+  show_help
+fi
+
+case "$1" in
+  create)
+    [ $# -lt 2 ] && { echo "Error: 'create' requires a branch name"; echo ""; show_help; }
+    cmd_create "$2"
+    ;;
+  remove)
+    [ $# -lt 2 ] && { echo "Error: 'remove' requires a branch name"; echo ""; show_help; }
+    cmd_remove "$2"
+    ;;
+  list)
+    cmd_list
+    ;;
+  cd)
+    [ $# -lt 2 ] && { echo "Error: 'cd' requires a branch name"; echo ""; show_help; }
+    cmd_cd "$2"
+    ;;
+  -h|--help)
+    show_help
+    ;;
+  -v|--version)
+    echo "wt v${VERSION}"
+    exit 0
+    ;;
+  *)
+    echo "Error: Unknown command '$1'"
+    echo ""
+    show_help
+    ;;
+esac

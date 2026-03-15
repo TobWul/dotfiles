@@ -1,31 +1,22 @@
 ---
-description: Complete all tasks in prd
+description: Work through Linear issues one at a time
 ---
 
 ## Your Task
 
-1. Read @AGENTS.md for code style
-1. Read the PRD at @plans/prd.json
-1. Read the progress log at @plans/progress.txt
-1. Pick a user story where `passes: false`
-1. Implement that single user story
-1. Run quality checks (e.g., typecheck, lint, test - use whatever your project requires)
-1. Update AGENTS.md files if you discover reusable patterns (see below)
-1. If checks pass, commit ALL changes with message: `feat: [Story ID] - [Story Title]`
-1. Update the PRD to set `passes: true` for the completed story
-1. Append your progress to `progress.txt`
+The user has provided a Linear issue. Use it to fetch the relevant sub-issues.
 
-## When choosing the next task, prioritize in this order:
+1. Fetch issues from Linear (sub-issues of parent)
+2. Determine order: unblocked issues first (by blocking relationships), then by priority
+3. Pick the next issue that is not "Done" or "In Progress"
+4. Move it to "In Progress" in Linear
+5. Implement that single issue
+6. Run quality checks (typecheck, lint, test)
+7. If checks pass, commit with message: `feat: [Issue ID] - [Issue Title]`
+8. Move issue to "Done" in Linear
 
-1. Architectural decisions and core abstractions
-1. Integration points between modules
-1. Unknown unknowns and spike work
-1. Standard features and implementation
-1. Polish, cleanup, and quick wins
-   Fail fast on risky work. Save easy wins for later.
+ONLY WORK ON A SINGLE ISSUE.
 
-ONLY WORK ON A SINGLE TASK.
+If all issues are "Done", output <promise>COMPLETE</promise>. Otherwise, never output this string.
 
-If the PRD is complete, output <promise>COMPLETE</promise>. Otherwise, never output this string, else it will break.
-
-Create a PR with linear issue ilinear issue id
+IMPORTANT, DO NOT EVER TYPE OUT <promise>COMPLETE</promise> UNLESS ALL ISSUES ARE DONE. NOT EVEN IN THINKING

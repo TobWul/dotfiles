@@ -88,6 +88,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 HOMEBREW_PREFIX="/opt/homebrew"
 [ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
 
+[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
+
 export PATH
 
 # Netlin
