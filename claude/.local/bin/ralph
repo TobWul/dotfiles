@@ -1,0 +1,126 @@
+#!/bin/bash
+set -euo pipefail
+
+VERSION="4.0.0"
+DEFAULT_ITERATIONS=1
+
+# --- Help ---
+show_help() {
+  cat <<EOF
+ralph v${VERSION} - Run claude worker loop against Linear issues
+
+Usage:
+  ralph --issue <linear-id> [--iterations <n>]
+  ralph -i <linear-id> [-n <n>]
+
+Options:
+  -i, --issue       Linear issue, project, or cycle ID (required)
+  -n, --iterations  Max iterations before stopping (default: ${DEFAULT_ITERATIONS})
+  -h, --help        Show this help message
+  -v, --version     Show version
+
+Examples:
+  ralph --issue ENG-123
+  ralph -i ENG-123 -n 5
+
+Note: Run from the project root or worktree directory.
+EOF
+  exit 0
+}
+
+# --- Parse flags ---
+ISSUE=""
+ITERATIONS=$DEFAULT_ITERATIONS
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -i|--issue)      ISSUE="$2"; shift 2 ;;
+    -n|--iterations) ITERATIONS="$2"; shift 2 ;;
+    -h|--help)       show_help ;;
+    -v|--version)    echo "ralph v${VERSION}"; exit 0 ;;
+    *)
+      echo "Error: Unknown option '$1'"
+      echo ""
+      echo "Run 'ralph --help' for usage."
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$ISSUE" ]; then
+  echo "Error: --issue is required."
+  echo ""
+  echo "Run 'ralph --help' for usage."
+  exit 1
+fi
+
+# --- Prompt ---
+PROMPT="PROJECT_ROOT=$(pwd)
+ISSUE_ID=${ISSUE}
+
+## Your Task
+
+The user has provided a Linear issue. Use it to fetch the relevant sub-issues.
+
+1. Fetch issues from Linear (sub-issues of parent)
+2. Determine order: unblocked issues first (by blocking relationships), then by priority
+3. Pick the next issue that is not \"Done\" or \"In Progress\"
+4. Move it to \"In Progress\" in Linear
+5. Implement that single issue
+6. Run quality checks (typecheck, lint, test)
+7. If checks pass, commit with message: \`feat: [Issue ID] - [Issue Title]\`
+8. Move issue to \"Done\" in Linear
+
+/tdd
+
+ONLY WORK ON A SINGLE ISSUE.
+
+End your response with exactly one of:
+- <promise>COMPLETE</promise> if all issues are Done
+- <promise>BLOCKED:reason</promise> if you need human help to continue
+- <promise>DECIDE:question</promise> if you need a decision before continuing
+
+IMPORTANT: DO NOT OUTPUT <promise>COMPLETE</promise> UNLESS ALL ISSUES ARE TRULY DONE. NOT EVEN IN THINKING."
+
+# --- Run ---
+echo "ralph v${VERSION} | issue: ${ISSUE} | max iterations: ${ITERATIONS}"
+echo "Press ^C to stop"
+echo ""
+
+for ((i=1; i<=ITERATIONS; i++)); do
+  echo "=== Iteration ${i}/${ITERATIONS} ==="
+  echo ""
+
+  OUTPUT_FILE=$(mktemp)
+  script -q "$OUTPUT_FILE" claude --dangerously-skip-permissions -p "$PROMPT" 2>/dev/null || true
+  OUTPUT=$(tr -d '\r' < "$OUTPUT_FILE" | sed $'s/\x1b\\[[0-9;]*[mGKHF]//g')
+  rm -f "$OUTPUT_FILE"
+
+  # Promise tag checks
+  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
+    echo ""
+    echo "✓ All issues complete after ${i} iteration(s)."
+    exit 0
+  fi
+
+  if echo "$OUTPUT" | grep -q "<promise>BLOCKED:"; then
+    REASON=$(echo "$OUTPUT" | grep -o '<promise>BLOCKED:[^<]*</promise>' | sed 's/<promise>BLOCKED:\([^<]*\)<\/promise>/\1/' | head -1)
+    echo ""
+    echo "⚠ Blocked: ${REASON:-unknown reason}"
+    echo "Resolve the issue and run ralph again."
+    exit 2
+  fi
+
+  if echo "$OUTPUT" | grep -q "<promise>DECIDE:"; then
+    QUESTION=$(echo "$OUTPUT" | grep -o '<promise>DECIDE:[^<]*</promise>' | sed 's/<promise>DECIDE:\([^<]*\)<\/promise>/\1/' | head -1)
+    echo ""
+    echo "? Decision needed: ${QUESTION:-see output above}"
+    echo "Answer the question and run ralph again."
+    exit 3
+  fi
+
+  echo ""
+done
+
+echo "Reached max iterations (${ITERATIONS}). Run again to continue."
+exit 1

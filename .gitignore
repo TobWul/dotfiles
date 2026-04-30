@@ -9,3 +9,14 @@ foo.*
 *.log
 data
 nvim/.config/nvim/lua/plugins/.DS_Store
+
+# Claude Code local/personal config
+.claude/settings.local.json
+claude/.claude.json
+
+# Opencode ephemeral state
+opencode/.config/opencode/opencode-notifier-state.json
+opencode/.config/opencode/package-lock.json
+
+# Neovim plugin lock
+nvim/.config/nvim/lazy-lock.json

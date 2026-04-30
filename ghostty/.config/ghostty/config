@@ -1,5 +1,5 @@
 font-family = "JetBrainsMono Nerd Font Mono"
-theme = Catppuccin Mocha
+theme = everforest-dark
 # background-opacity = 0.98
 background-blur = true
 macos-titlebar-style = hidden

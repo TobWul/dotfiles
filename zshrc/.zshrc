@@ -53,18 +53,19 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 # -----------------------------------------------------------------------------
 # Alias
 # -----------------------------------------------------------------------------
+alias v="nvim"
 alias vim="nvim"
 alias lg="lazygit"
 alias ta="tmux attach"
 alias tk="tmux kill-session -t"
 alias tl="tmux list-sessions"
-alias ai="opencode"
-alias ralph-once="opencode run --command ralph-once --agent ralph"
+alias ai="claude"
 alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
 alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
 alias nvm="fnm"
+alias pr="gh dash"
 
 # -----------------------------------------------------------------------------
 # Key Bindings
@@ -115,3 +116,5 @@ export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
 
 # Fnm
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

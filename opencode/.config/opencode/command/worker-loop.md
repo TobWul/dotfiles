@@ -15,6 +15,8 @@ The user has provided a Linear issue. Use it to fetch the relevant sub-issues.
 7. If checks pass, commit with message: `feat: [Issue ID] - [Issue Title]`
 8. Move issue to "Done" in Linear
 
+/tdd skill
+
 ONLY WORK ON A SINGLE ISSUE.
 
 If all issues are "Done", output <promise>COMPLETE</promise>. Otherwise, never output this string.

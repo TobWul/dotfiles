@@ -1,0 +1,14 @@
+prSections:
+  - title: "My Pull Requests"
+    filters: "is:open author:@me"
+  - title: "All PRs"
+    filters: "is:open"
+  - title: "Involved"
+    filters: "is:open involves:@me -author:@me"
+pager:
+  diff: diffnav
+keybindings:
+  universal:
+    - key: g
+      name: lazygit
+      command: cd {{.RepoPath}} && lazygit

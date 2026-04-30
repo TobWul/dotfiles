@@ -9,6 +9,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 # Packages to stow (active configs only)
 STOW_PACKAGES=(
   bat
+  claude
   ghostty
   gitconfig
   lazygit
