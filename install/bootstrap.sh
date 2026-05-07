@@ -64,3 +64,14 @@ else
   curl -fsSL https://opencode.ai/install | bash
   echo "OpenCode installed"
 fi
+
+# Worktrunk (git worktree manager) - shell integration + executable permissions
+if command -v wt &>/dev/null; then
+  echo "Worktrunk already installed"
+  # Ensure wt-tmux-session helper is executable
+  WTS="$HOME/.local/bin/wt-tmux-session"
+  [ -f "$WTS" ] && chmod +x "$WTS"
+  # Shell integration is sourced from .zshrc via eval
+else
+  echo "Warning: worktrunk not found. Install packages first."
+fi

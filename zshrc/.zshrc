@@ -111,6 +111,9 @@ bindkey -s ^f "tmux-sessionizer\n"
 # FZF
 source <(fzf --zsh)
 
+# Worktrunk (git worktree manager)
+command -v wt &>/dev/null && eval "$(wt config shell init zsh)"
+
 # opencode
 export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
 

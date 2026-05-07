@@ -17,6 +17,7 @@ STOW_PACKAGES=(
   opencode
   starship
   tmux
+  worktrunk
   zshrc
 )
 
