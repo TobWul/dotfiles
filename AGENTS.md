@@ -44,7 +44,7 @@ All install automation lives in `install/`. The pattern follows the typecraft Cr
 | `install/utils.sh` | Helper functions: colored output, idempotent `install_formulas()` and `install_casks()`. |
 | `install/packages.conf` | Categorized package arrays: `CLI_TOOLS`, `DEV_TOOLS`, `CASK_APPS`, `FONTS`. |
 | `install/stow-setup.sh` | Runs `stow --restow` for each active package. |
-| `install/bootstrap.sh` | Post-install setup: TPM, Node.js via fnm, Bun, bat cache, OpenCode CLI, Worktrunk shell integration. |
+| `install/bootstrap.sh` | Post-install setup: TPM, Node.js via fnm, ni, Bun, bat cache, OpenCode CLI, Worktrunk shell integration. |
 
 Run everything with: `./install/run.sh`
 

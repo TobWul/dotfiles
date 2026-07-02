@@ -66,6 +66,7 @@ alias szsh="source ~/.zshrc"
 alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
 alias nvm="fnm"
 alias pr="gh dash"
+alias npm="ni"
 
 # -----------------------------------------------------------------------------
 # Key Bindings
@@ -121,3 +122,7 @@ export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+# >>> railway initialize >>>
+source "$HOME/.railway/env"
+# <<< railway initialize <<<

@@ -37,6 +37,19 @@ else
   echo "Warning: fnm not found. Install packages first."
 fi
 
+# ni (universal package manager installer by antfu)
+if command -v ni &>/dev/null; then
+  echo "ni already installed"
+else
+  if command -v npm &>/dev/null; then
+    echo "Installing ni (@antfu/ni)..."
+    npm install -g @antfu/ni
+    echo "ni installed"
+  else
+    echo "Warning: npm not found. Skipping ni installation."
+  fi
+fi
+
 # Bun
 if command -v bun &>/dev/null; then
   echo "Bun already installed"

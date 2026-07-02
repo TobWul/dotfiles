@@ -21,7 +21,21 @@ return {
 				-- Your config here
 				background = "hard",
 			})
+			-- Start with dark
+			vim.o.background = "dark"
 			vim.cmd([[colorscheme everforest]])
+
+			-- Toggle between light/dark variants
+			function ToggleTheme()
+				if vim.o.background == "dark" then
+					vim.o.background = "light"
+				else
+					vim.o.background = "dark"
+				end
+				vim.cmd([[colorscheme everforest]])
+			end
+
+			vim.keymap.set("n", "<leader>tt", ToggleTheme, { desc = "[T]oggle between light/dark theme" })
 		end,
 	},
 	-- {

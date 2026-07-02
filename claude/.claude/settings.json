@@ -41,6 +41,7 @@
       "Bash(bun install)",
       "Bash(bun test*)",
       "Bash(pnpm run lint*)",
+      "Bash(pnpm run typecheck*)",
       "Bash(pnpm run test*)",
       "Bash(pnpm run build*)",
       "Bash(pnpm run check*)",
@@ -58,6 +59,7 @@
       "Bash(gh repo view*)",
       "Bash(gh run list*)",
       "Bash(gh run view*)",
+      "Bash(bd:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(echo:*)",
@@ -84,7 +86,8 @@
       "Bash(jq:*)",
       "Bash(node:*)",
       "mcp__linear__*",
-      "mcp__figma__*"
+      "mcp__figma__*",
+      "mcp__paper__*"
     ],
     "deny": [
       "Bash(curl:*)",
@@ -93,7 +96,7 @@
       "Read(./secrets/**)"
     ]
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {
     "PreToolUse": [
       {
@@ -109,11 +112,19 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 2
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "alwaysThinkingEnabled": true,
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
   "editorMode": "vim",
-  "skipAutoPermissionPrompt": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }

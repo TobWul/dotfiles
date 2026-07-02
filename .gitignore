@@ -14,6 +14,30 @@ nvim/.config/nvim/lua/plugins/.DS_Store
 .claude/settings.local.json
 claude/.claude.json
 
+# Claude Code runtime state (~/.claude is stowed into this repo)
+claude/.claude/.last-cleanup
+claude/.claude/.last-update-result.json
+claude/.claude/settings.json.bak
+claude/.claude/settings.json.orig
+claude/.claude/daemon.log
+claude/.claude/history.jsonl
+claude/.claude/backups/
+claude/.claude/cache/
+claude/.claude/daemon/
+claude/.claude/downloads/
+claude/.claude/file-history/
+claude/.claude/image-cache/
+claude/.claude/jobs/
+claude/.claude/paste-cache/
+claude/.claude/plans/
+claude/.claude/plugins/
+claude/.claude/projects/
+claude/.claude/session-env/
+claude/.claude/sessions/
+claude/.claude/shell-snapshots/
+claude/.claude/tasks/
+claude/.claude/telemetry/
+
 # Opencode ephemeral state
 opencode/.config/opencode/opencode-notifier-state.json
 opencode/.config/opencode/package-lock.json
