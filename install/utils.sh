@@ -37,6 +37,17 @@ is_cask_installed() {
   brew list --cask "$1" &>/dev/null
 }
 
+# Check if a cask's app bundle already exists in /Applications
+# (e.g. installed manually or via the App Store, so brew doesn't know about it)
+cask_app_exists() {
+  local app
+  while IFS= read -r app; do
+    [ -e "/Applications/$app" ] && return 0
+  done < <(brew info --cask "$1" 2>/dev/null |
+    sed -n '/^==> Artifacts/,/^==> /p' | sed -n 's/ (App)$//p')
+  return 1
+}
+
 # Install brew formulas (idempotent)
 install_formulas() {
   local packages=("$@")
@@ -63,11 +74,12 @@ install_casks() {
   for cask in "${casks[@]}"; do
     if is_cask_installed "$cask"; then
       success "$cask already installed"
+    elif cask_app_exists "$cask"; then
+      success "$cask already in /Applications (not managed by brew)"
     else
       info "Installing cask: $cask"
       if ! brew install --cask "$cask" 2>/dev/null; then
-        # App likely already exists in /Applications but wasn't installed via brew
-        warn "$cask failed to install (app may already exist). Skipping."
+        warn "$cask failed to install. Skipping."
       fi
     fi
   done

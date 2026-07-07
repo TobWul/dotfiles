@@ -117,6 +117,7 @@
     "refreshInterval": 10
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
   "voice": {
     "enabled": true,
     "mode": "hold"

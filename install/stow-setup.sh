@@ -8,6 +8,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 
 # Packages to stow (active configs only)
 STOW_PACKAGES=(
+  agents
   bat
   claude
   ghostty
@@ -41,6 +42,9 @@ for package in "${STOW_PACKAGES[@]}"; do
     echo "Warning: package directory '$package' not found, skipping"
   fi
 done
+
+# Link skills into Claude's expected location
+ln -sfn "$HOME/.agents/skills" "$HOME/.claude/skills"
 
 # Delta doesn't use stow - it's referenced via absolute path from .gitconfig
 # Just verify the delta theme exists
