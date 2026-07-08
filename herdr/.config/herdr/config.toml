@@ -1,0 +1,88 @@
+# herdr configuration — ~/.config/herdr/config.toml
+# Only overrides are set here; everything else uses herdr's defaults
+# (see `herdr --default-config`).
+
+[theme]
+name = "catppuccin"
+auto_switch = true
+light_name = "catppuccin-latte"
+dark_name = "catppuccin"
+
+[keys]
+# Match old tmux muscle memory (herdr default is ctrl+b).
+prefix = "ctrl+space"
+
+# Free up prefix+n for the project sessionizer below.
+# (herdr's default prefix+n is next_tab — still reachable via prefix+1..9
+#  and prefix+p for previous tab.)
+next_tab = ""
+
+# Pane focus is handled by ctrl+h/j/k/l (vim-herdr-navigation, below), so drop
+# the default prefix+h/j/k/l bindings.
+focus_pane_left = ""
+focus_pane_down = ""
+focus_pane_up = ""
+focus_pane_right = ""
+
+# Reuse the freed prefix+h for horizontal split (default was prefix+minus).
+split_horizontal = "prefix+h"
+
+# Navigate the workspace list with vim-style prefix+k (up) / prefix+j (down).
+# (Both are unset by default in herdr.)
+previous_workspace = "prefix+k"
+next_workspace = "prefix+j"
+
+# Rename the current tab (default was prefix+shift+t).
+rename_tab = "prefix+."
+
+# New tab (default was prefix+c).
+new_tab = "prefix+t"
+
+# prefix+n: open a NEW workspace from a ~/git project (create-or-focus).
+# prefix+f: switch to an already-open workspace.
+# Both run in a temporary pane so fzf gets a TTY.
+[[keys.command]]
+key = "prefix+n"
+type = "pane"
+command = "/Users/tobiaswulvik/.local/scripts/herdr-sessionizer new"
+description = "new workspace (~/git project)"
+
+[[keys.command]]
+key = "prefix+f"
+type = "pane"
+command = "/Users/tobiaswulvik/.local/scripts/herdr-sessionizer switch"
+description = "switch open workspace"
+
+# Seamless ctrl+h/j/k/l navigation between Neovim splits and herdr panes via the
+# vim-herdr-navigation plugin. herdr owns these chords globally; the plugin's
+# navigate.sh checks (jq + `herdr pane process-info`) whether the focused pane is
+# running vim/nvim — if so it forwards the chord into the pane, otherwise it moves
+# herdr pane focus. The Neovim side is set up in
+# nvim/.config/nvim/lua/plugins/vim-tmux-navigator.lua.
+#
+# Bootstrap once per machine (state lives outside this stow repo):
+#   herdr plugin install paulbkim-dev/vim-herdr-navigation --yes
+# Requires jq on PATH.
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"

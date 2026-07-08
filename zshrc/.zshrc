@@ -107,7 +107,7 @@ export EDITOR="nvim"
 eval "$(zoxide init --cmd cd zsh)"
 
 # Tmux
-bindkey -s ^f "tmux-sessionizer\n"
+bindkey -s ^f "herdr-sessionizer\n"
 
 # FZF
 source <(fzf --zsh)
