@@ -1,11 +1,11 @@
 return {
 	{
 		"davidmh/mdx.nvim",
-		config = true,
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
+		branch = "master",
 		build = ":TSUpdate",
 		main = "nvim-treesitter.configs",
 		event = { "VeryLazy" },
