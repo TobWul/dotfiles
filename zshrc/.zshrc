@@ -123,6 +123,8 @@ eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
+
+
 # >>> railway initialize >>>
 source "$HOME/.railway/env"
 # <<< railway initialize <<<

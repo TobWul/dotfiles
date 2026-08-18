@@ -1,9 +1,10 @@
+onboarding = false
 # herdr configuration — ~/.config/herdr/config.toml
 # Only overrides are set here; everything else uses herdr's defaults
 # (see `herdr --default-config`).
 
 [theme]
-name = "catppuccin"
+name = "tokyo-night"
 auto_switch = true
 light_name = "catppuccin-latte"
 dark_name = "catppuccin"
