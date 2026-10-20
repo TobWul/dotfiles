@@ -63,10 +63,21 @@ alias ai="claude"
 alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
-alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
+alias cloud="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
 alias nvm="fnm"
 alias pr="gh dash"
 alias npm="ni"
+
+# Agent skills (vercel-labs/skills): always global, stored in ~/.agents/skills
+# (dotfiles). Only codex is targeted; other agents symlink to that dir via
+# install/stow-setup.sh. Bypass with `command npx skills ...` for project installs.
+skills() {
+  case "$1" in
+    add|a|install|i) command npx skills@latest "$@" -g -a codex ;;
+    update|remove|rm|list|ls) command npx skills@latest "$@" -g ;;
+    *) command npx skills@latest "$@" ;;
+  esac
+}
 
 # -----------------------------------------------------------------------------
 # Key Bindings
@@ -88,6 +99,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Static paths (adjust if different on Intel)
 HOMEBREW_PREFIX="/opt/homebrew"
+[ -d "$HOMEBREW_PREFIX/bin" ] && PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH"
 [ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
 
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
@@ -103,11 +115,8 @@ export EDITOR="nvim"
 # Tools (lightweight first)
 # -----------------------------------------------------------------------------
 
-# Zoxide
-eval "$(zoxide init --cmd cd zsh)"
-
 # Tmux
-bindkey -s ^f "tmux-sessionizer\n"
+bindkey -s ^f "herdr-sessionizer\n"
 
 # FZF
 source <(fzf --zsh)
@@ -116,13 +125,14 @@ source <(fzf --zsh)
 command -v wt &>/dev/null && eval "$(wt config shell init zsh)"
 
 # opencode
-export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # Fnm
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
-
 # >>> railway initialize >>>
 source "$HOME/.railway/env"
 # <<< railway initialize <<<
+
+# Zoxide (must stay last: zoxide requires its hook to be set up after everything else)
+eval "$(zoxide init --cmd cd zsh)"

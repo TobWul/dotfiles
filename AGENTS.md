@@ -9,6 +9,7 @@ This is a macOS dotfiles repository managed with **GNU Stow**. Each top-level di
 ```
 dotfiles/
 ├── install/           # Installation scripts (run.sh is the entry point)
+├── agents/            # Shared agent skills (~/.agents/skills) for Claude Code, OpenCode, Codex
 ├── bat/               # bat (cat replacement) config + catppuccin theme
 ├── delta/             # git-delta theme (NOT stowed - referenced by absolute path)
 ├── ghostty/           # Ghostty terminal config
@@ -28,9 +29,9 @@ dotfiles/
 
 ## Active Stow Packages
 
-These 10 packages are actively used and deployed via `stow --restow <package>`:
+These 12 packages are actively used and deployed via `stow --restow <package>`:
 
-`bat`, `ghostty`, `gitconfig`, `lazygit`, `nvim`, `opencode`, `starship`, `tmux`, `worktrunk`, `zshrc`
+`agents`, `bat`, `claude`, `ghostty`, `gitconfig`, `lazygit`, `nvim`, `opencode`, `starship`, `tmux`, `worktrunk`, `zshrc`
 
 The `delta/` directory is an exception -- it is referenced via absolute path (`~/dotfiles/delta/themes/catppuccin-theme.gitconfig`) from `.gitconfig` and does not need stowing.
 
@@ -75,6 +76,16 @@ Worktrees are managed by [Worktrunk](https://worktrunk.dev) (`wt` command). The 
 Per-project hooks (dep install, env symlinks, dev servers) go in each repo's `.config/wt.toml`.
 
 The `tmux-sessionizer` script (Ctrl-f) handles `~/git` non-bare project selection only (skips `*.git` dirs). Worktree navigation uses `wt switch` (interactive picker with diff/log previews).
+
+## Agent Skills
+
+All agent skills live in one store: `agents/.agents/skills/` (stowed to `~/.agents/skills`). Skill files and the global lock (`agents/.agents/.skill-lock.json`) are committed, so a fresh machine gets them from stow alone.
+
+- **Install/update** with the `skills` zsh function (wraps `npx skills@latest` from [vercel-labs/skills](https://github.com/vercel-labs/skills)). It forces global mode and targets only `codex`, whose global path is `~/.agents/skills`: `skills add mattpocock/skills -s tdd`, `skills update`, `skills rm <name>`, `skills ls`.
+- **Other agents** get a whole-dir symlink to `~/.agents/skills`, created by the `AGENT_SKILL_DIRS` loop in `install/stow-setup.sh` (`~/.claude/skills`, `~/.config/opencode/skills`). To support a new agent, add its global skills dir there. Never let the CLI target `claude-code`/`opencode` directly -- it would write per-skill symlinks into stowed dirs.
+- Don't use Claude Code plugins for skills that exist here (avoids duplicates).
+- `synced/` and `.trash/` inside the skills dir are Claude Code runtime state and are gitignored.
+- `use-railway` is hand-managed (not in the lock).
 
 ## Editing Guidelines
 

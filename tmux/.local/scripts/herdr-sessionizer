@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# herdr-sessionizer: fuzzy pickers for herdr workspaces.
+#
+# Usage:
+#   herdr-sessionizer            open a NEW workspace from a ~/git project
+#   herdr-sessionizer new        same as above (explicit)
+#   herdr-sessionizer switch     switch to an already-open workspace
+#   herdr-sessionizer <PATH>     open/focus <PATH> directly (per-project keybinds)
+#
+# Bound in ~/.config/herdr/config.toml (type = "pane"):
+#   prefix+n -> new     prefix+f -> switch
+
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+
+# Focus an open workspace whose label matches $1's basename, else create one.
+focus_or_create() {
+    local path="${1%/}"
+    local label id
+    label="$(basename "$path")"
+    id="$("$herdr_bin" workspace list 2>/dev/null \
+        | jq -r --arg label "$label" \
+            '.result.workspaces[]? | select(.label == $label) | .workspace_id' \
+        | head -n1)"
+    if [[ -n "$id" ]]; then
+        "$herdr_bin" workspace focus "$id"
+    else
+        "$herdr_bin" workspace create --cwd "$path" --label "$label" --focus
+    fi
+}
+
+# Switch to an already-open workspace.
+pick_switch() {
+    local selection kind key
+    # Lines are TAB-separated: <workspace_id>\t<label>. fzf shows only the label.
+    selection="$("$herdr_bin" workspace list 2>/dev/null \
+        | jq -r '.result.workspaces[]? | "\(.workspace_id)\t\(.label)"' \
+        | fzf --reverse --delimiter='\t' --with-nth=2 --header='Switch workspace')"
+    [[ -z "$selection" ]] && exit 0
+    key="$(cut -f1 <<<"$selection")"
+    "$herdr_bin" workspace focus "$key"
+}
+
+# Open a new workspace from a ~/git project. Always creates a fresh workspace,
+# even if one for this project is already open (use prefix+f to switch instead).
+pick_new() {
+    local selected label
+    selected="$(find "$HOME/git" -mindepth 1 -maxdepth 1 -type d ! -name '*.git' \
+        | sort \
+        | fzf --reverse --header='Open project workspace')"
+    [[ -z "$selected" ]] && exit 0
+    selected="${selected%/}"
+    label="$(basename "$selected")"
+    "$herdr_bin" workspace create --cwd "$selected" --label "$label" --focus
+}
+
+case "${1:-new}" in
+    switch) pick_switch ;;
+    new)    pick_new ;;
+    *)      focus_or_create "$1" ;;  # a path (per-project keybinds)
+esac

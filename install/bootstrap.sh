@@ -78,6 +78,31 @@ else
   echo "OpenCode installed"
 fi
 
+# herdr (terminal workspace manager)
+if command -v herdr &>/dev/null; then
+  echo "herdr already installed"
+else
+  echo "Installing herdr..."
+  curl -fsSL https://herdr.dev/install.sh | sh
+  # Installs to ~/.local/bin; make sure it's on PATH for the rest of this script
+  [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+  echo "herdr installed"
+fi
+
+# herdr plugin: vim-herdr-navigation - seamless ctrl+h/j/k/l nav between nvim
+# splits and herdr panes (see herdr/.config/herdr/config.toml). Requires jq.
+if command -v herdr &>/dev/null; then
+  if herdr plugin list 2>/dev/null | grep -q "vim-herdr-navigation"; then
+    echo "vim-herdr-navigation herdr plugin already installed"
+  else
+    echo "Installing vim-herdr-navigation herdr plugin..."
+    herdr plugin install paulbkim-dev/vim-herdr-navigation --yes
+    echo "vim-herdr-navigation herdr plugin installed"
+  fi
+else
+  echo "Warning: herdr not found. Skipping vim-herdr-navigation plugin install."
+fi
+
 # Worktrunk (git worktree manager) - shell integration + executable permissions
 if command -v wt &>/dev/null; then
   echo "Worktrunk already installed"

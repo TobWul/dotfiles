@@ -43,8 +43,17 @@ for package in "${STOW_PACKAGES[@]}"; do
   fi
 done
 
-# Link skills into Claude's expected location
-ln -sfn "$HOME/.agents/skills" "$HOME/.claude/skills"
+# Point each agent's global skills dir at the shared store (~/.agents/skills).
+# Codex reads ~/.agents/skills natively. Add new agents here.
+AGENT_SKILL_DIRS=(
+  "$HOME/.claude/skills"
+  "$HOME/.config/opencode/skills"
+)
+
+for dir in "${AGENT_SKILL_DIRS[@]}"; do
+  mkdir -p "$(dirname "$dir")"
+  ln -sfn "$HOME/.agents/skills" "$dir"
+done
 
 # Delta doesn't use stow - it's referenced via absolute path from .gitconfig
 # Just verify the delta theme exists

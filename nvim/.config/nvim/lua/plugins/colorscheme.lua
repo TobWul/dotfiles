@@ -1,43 +1,37 @@
 return {
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+	},
 	-- {
-	-- 	"vague2k/vague.nvim",
-	-- 	lazy = false, -- make sure we load this during startup if it is your main colorscheme
-	-- 	priority = 1000, -- make sure to load this before all the other plugins
-	-- 	config = function()
-	-- 		-- NOTE: you do not need to call setup if you don't want to.
-	-- 		require("vague").setup({
-	-- 			-- optional configuration here
+	-- 	"neanias/everforest-nvim",
+	-- 	version = false,
+	-- 	lazy = false,
+	-- 	priority = 1000, -- make sure to load this before all the other start plugins
+	-- 	config = function(_, opts)
+	-- 		require("everforest").setup({
+	-- 			-- Your config here
+	-- 			background = "hard",
 	-- 		})
-	-- 		vim.cmd("colorscheme vague")
+	-- 		-- Start with dark
+	-- 		vim.o.background = "dark"
+	-- 		vim.cmd([[colorscheme everforest]])
+	--
+	-- 		-- Toggle between light/dark variants
+	-- 		function ToggleTheme()
+	-- 			if vim.o.background == "dark" then
+	-- 				vim.o.background = "light"
+	-- 			else
+	-- 				vim.o.background = "dark"
+	-- 			end
+	-- 			vim.cmd([[colorscheme everforest]])
+	-- 		end
+	--
+	-- 		vim.keymap.set("n", "<leader>tt", ToggleTheme, { desc = "[T]oggle between light/dark theme" })
 	-- 	end,
 	-- },
-	{
-		"neanias/everforest-nvim",
-		version = false,
-		lazy = false,
-		priority = 1000, -- make sure to load this before all the other start plugins
-		config = function(_, opts)
-			require("everforest").setup({
-				-- Your config here
-				background = "hard",
-			})
-			-- Start with dark
-			vim.o.background = "dark"
-			vim.cmd([[colorscheme everforest]])
-
-			-- Toggle between light/dark variants
-			function ToggleTheme()
-				if vim.o.background == "dark" then
-					vim.o.background = "light"
-				else
-					vim.o.background = "dark"
-				end
-				vim.cmd([[colorscheme everforest]])
-			end
-
-			vim.keymap.set("n", "<leader>tt", ToggleTheme, { desc = "[T]oggle between light/dark theme" })
-		end,
-	},
 	-- {
 	-- 	"catppuccin/nvim",
 	-- 	name = "catppuccin",
