@@ -63,7 +63,7 @@ alias ai="claude"
 alias python="python3"
 alias pip="pip3"
 alias szsh="source ~/.zshrc"
-alias cloud="/Users/tobias/Library/Mobile Documents/com~apple~CloudDocs"
+alias cloud="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
 alias nvm="fnm"
 alias pr="gh dash"
 alias npm="ni"
@@ -88,6 +88,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Static paths (adjust if different on Intel)
 HOMEBREW_PREFIX="/opt/homebrew"
+[ -d "$HOMEBREW_PREFIX/bin" ] && PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH"
 [ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
 
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
@@ -116,7 +117,7 @@ source <(fzf --zsh)
 command -v wt &>/dev/null && eval "$(wt config shell init zsh)"
 
 # opencode
-export PATH=/Users/tobiaswulvik/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # Fnm
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"

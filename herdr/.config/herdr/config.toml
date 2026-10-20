@@ -45,13 +45,13 @@ new_tab = "prefix+t"
 [[keys.command]]
 key = "prefix+n"
 type = "pane"
-command = "/Users/tobiaswulvik/.local/scripts/herdr-sessionizer new"
+command = "$HOME/.local/scripts/herdr-sessionizer new"
 description = "new workspace (~/git project)"
 
 [[keys.command]]
 key = "prefix+f"
 type = "pane"
-command = "/Users/tobiaswulvik/.local/scripts/herdr-sessionizer switch"
+command = "$HOME/.local/scripts/herdr-sessionizer switch"
 description = "switch open workspace"
 
 # Seamless ctrl+h/j/k/l navigation between Neovim splits and herdr panes via the

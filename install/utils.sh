@@ -40,11 +40,14 @@ is_cask_installed() {
 # Check if a cask's app bundle already exists in /Applications
 # (e.g. installed manually or via the App Store, so brew doesn't know about it)
 cask_app_exists() {
-  local app
-  while IFS= read -r app; do
-    [ -e "/Applications/$app" ] && return 0
-  done < <(brew info --cask "$1" 2>/dev/null |
+  local app apps
+  apps=$(brew info --cask "$1" 2>/dev/null |
     sed -n '/^==> Artifacts/,/^==> /p' | sed -n 's/ (App)$//p')
+  while IFS= read -r app; do
+    [ -n "$app" ] && [ -e "/Applications/$app" ] && return 0
+  done <<EOF
+$apps
+EOF
   return 1
 }
 
