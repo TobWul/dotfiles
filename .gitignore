@@ -44,3 +44,10 @@ opencode/.config/opencode/package-lock.json
 
 # Neovim plugin lock
 nvim/.config/nvim/lazy-lock.json
+
+# Agent skills: Claude Code runtime state written into ~/.claude/skills (-> ~/.agents/skills)
+agents/.agents/skills/synced/
+agents/.agents/skills/.trash/
+
+# Per-machine symlink to ~/.agents/skills (created by install/stow-setup.sh)
+opencode/.config/opencode/skills

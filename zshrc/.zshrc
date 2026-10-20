@@ -68,6 +68,17 @@ alias nvm="fnm"
 alias pr="gh dash"
 alias npm="ni"
 
+# Agent skills (vercel-labs/skills): always global, stored in ~/.agents/skills
+# (dotfiles). Only codex is targeted; other agents symlink to that dir via
+# install/stow-setup.sh. Bypass with `command npx skills ...` for project installs.
+skills() {
+  case "$1" in
+    add|a|install|i) command npx skills@latest "$@" -g -a codex ;;
+    update|remove|rm|list|ls) command npx skills@latest "$@" -g ;;
+    *) command npx skills@latest "$@" ;;
+  esac
+}
+
 # -----------------------------------------------------------------------------
 # Key Bindings
 # -----------------------------------------------------------------------------
@@ -104,9 +115,6 @@ export EDITOR="nvim"
 # Tools (lightweight first)
 # -----------------------------------------------------------------------------
 
-# Zoxide
-eval "$(zoxide init --cmd cd zsh)"
-
 # Tmux
 bindkey -s ^f "herdr-sessionizer\n"
 
@@ -122,10 +130,9 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # Fnm
 eval "$(fnm env --use-on-cd --shell zsh --log-level quiet)"
 
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
-
-
-
 # >>> railway initialize >>>
 source "$HOME/.railway/env"
 # <<< railway initialize <<<
+
+# Zoxide (must stay last: zoxide requires its hook to be set up after everything else)
+eval "$(zoxide init --cmd cd zsh)"
