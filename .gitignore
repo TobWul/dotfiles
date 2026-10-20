@@ -51,3 +51,6 @@ agents/.agents/skills/.trash/
 
 # Per-machine symlink to ~/.agents/skills (created by install/stow-setup.sh)
 opencode/.config/opencode/skills
+
+# IPython history (per-machine)
+ipython/.ipython/profile_default/history.sqlite
