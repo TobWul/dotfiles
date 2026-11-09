@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Global core.hooksPath makes git ignore .git/hooks, so forward each hook
+# to the repo-local one (e.g. installed by pre-commit or lefthook) if it exists.
+hook="${HOOK_NAME:-$(basename "$0")}"
+local_hook="$(git rev-parse --git-common-dir)/hooks/$hook"
+if [ -x "$local_hook" ]; then
+  exec "$local_hook" "$@"
+fi

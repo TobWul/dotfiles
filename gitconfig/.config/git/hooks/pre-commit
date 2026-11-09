@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Global pre-commit: scan staged changes for secrets, then run the repo's own hook.
+# Bypass once with: git commit --no-verify
+set -e
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --verbose --no-banner --log-level=warn
+else
+  echo "warning: gitleaks not installed, skipping secret scan" >&2
+fi
+
+HOOK_NAME=pre-commit exec "$(dirname "$0")/passthrough" "$@"

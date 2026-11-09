@@ -9,6 +9,7 @@
     ui = auto
 [branch]
     sort = -committerdate
+    autoSetupMerge = simple  # only track upstream with the same name (branches off origin/main get none)
 [tag]
     sort = version:refname
 [init]
@@ -42,6 +43,7 @@
 [core]
     excludesfile = ~/.gitignore
     pager = delta
+    hooksPath = ~/.config/git/hooks  # global gitleaks pre-commit, forwards to .git/hooks
 
 [interactive]
     diffFilter = delta --color-only
