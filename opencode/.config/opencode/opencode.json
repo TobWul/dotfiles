@@ -2,6 +2,11 @@
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": true,
   "mcp": {
+    "entur": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://api.entur.io/journey-planner-mcp/v1/mcp"
+    },
     "figma": {
       "enabled": true,
       "type": "remote",

@@ -115,8 +115,17 @@
     "padding": 0,
     "refreshInterval": 10
   },
+  "extraKnownMarketplaces": {
+    "worktrunk": {
+      "source": {
+        "source": "github",
+        "repo": "max-sixty/worktrunk"
+      }
+    }
+  },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "tui": "fullscreen",
   "voice": {
     "enabled": true,
     "mode": "hold"
@@ -126,5 +135,7 @@
   "editorMode": "vim",
   "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "model": "opus"
+  "enabledPlugins": {
+    "worktrunk@worktrunk": true
+  }
 }
