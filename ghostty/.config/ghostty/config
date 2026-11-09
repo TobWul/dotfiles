@@ -6,7 +6,7 @@ macos-titlebar-style = hidden
 font-size = 14
 
 # Map macOS Cmd+<digit> to send Ctrl-Space (NUL) + corresponding digit
-# so that these behave like pressing the tmux prefix (Ctrl-Space) then the digit.
+# so that these behave like pressing the herdr prefix (Ctrl-Space) then the digit (go to tab N).
 keybind = cmd+digit_1=unbind
 keybind = cmd+digit_2=unbind
 keybind = cmd+digit_3=unbind

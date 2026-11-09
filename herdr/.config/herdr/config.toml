@@ -10,7 +10,7 @@ light_name = "catppuccin-latte"
 dark_name = "catppuccin"
 
 [keys]
-# Match old tmux muscle memory (herdr default is ctrl+b).
+# Ctrl-Space prefix (herdr default is ctrl+b). Ghostty maps Cmd+<digit> to it.
 prefix = "ctrl+space"
 
 # Free up prefix+n for the project sessionizer below.
@@ -59,7 +59,7 @@ description = "switch open workspace"
 # navigate.sh checks (jq + `herdr pane process-info`) whether the focused pane is
 # running vim/nvim — if so it forwards the chord into the pane, otherwise it moves
 # herdr pane focus. The Neovim side is set up in
-# nvim/.config/nvim/lua/plugins/vim-tmux-navigator.lua.
+# nvim/.config/nvim/lua/keymaps.lua.
 #
 # Bootstrap once per machine (state lives outside this stow repo):
 #   herdr plugin install paulbkim-dev/vim-herdr-navigation --yes
@@ -87,3 +87,6 @@ key = "ctrl+l"
 type = "plugin_action"
 command = "vim-herdr-navigation.right"
 description = "navigate right (vim/herdr)"
+
+[ui]
+agent_panel_sort = "priority"

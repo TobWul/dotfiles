@@ -4,16 +4,6 @@
 # Bootstrap - install plugin managers and runtime tools
 # -----------------------------------------------------------------------------
 
-# TPM (Tmux Plugin Manager)
-TPM_DIR="$HOME/.tmux/plugins/tpm"
-if [ -d "$TPM_DIR" ]; then
-  echo "TPM already installed"
-else
-  echo "Installing Tmux Plugin Manager (TPM)..."
-  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
-  echo "TPM installed. Start tmux and press prefix + I to install plugins."
-fi
-
 # Zinit (Zsh plugin manager) - auto-bootstraps from .zshrc on first load
 # Just verify the target directory is ready
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -103,13 +93,9 @@ else
   echo "Warning: herdr not found. Skipping vim-herdr-navigation plugin install."
 fi
 
-# Worktrunk (git worktree manager) - shell integration + executable permissions
+# Worktrunk (git worktree manager) - shell integration is sourced from .zshrc via eval
 if command -v wt &>/dev/null; then
   echo "Worktrunk already installed"
-  # Ensure wt-tmux-session helper is executable
-  WTS="$HOME/.local/bin/wt-tmux-session"
-  [ -f "$WTS" ] && chmod +x "$WTS"
-  # Shell integration is sourced from .zshrc via eval
 else
   echo "Warning: worktrunk not found. Install packages first."
 fi

@@ -12,9 +12,7 @@ cd ~/dotfiles
 # Install everything: Homebrew, packages, symlinks, tools
 ./install/run.sh
 
-# Restart your terminal, then:
-# 1. Open tmux and press prefix + I to install tmux plugins
-# 2. Open nvim — lazy.nvim auto-installs plugins on first launch
+# Restart your terminal, then open nvim — lazy.nvim auto-installs plugins on first launch
 ```
 
 ## What's Included
@@ -25,53 +23,32 @@ cd ~/dotfiles
 | `delta` | git-delta diff theme (referenced by path, not stowed) |
 | `ghostty` | Ghostty terminal |
 | `gitconfig` | Global git config (SSH signing, delta pager) |
+| `herdr` | herdr workspace manager config + herdr-sessionizer project picker |
 | `lazygit` | Lazygit TUI |
 | `nvim` | Neovim (lazy.nvim, kickstart-based) |
 | `opencode` | OpenCode AI config, agents, commands, helper scripts |
 | `starship` | Starship prompt |
-| `tmux` | tmux config, Catppuccin theme, tmux-sessionizer |
-| `worktrunk` | Worktrunk worktree manager config, wt-tmux-session helper |
+| `worktrunk` | Worktrunk worktree manager config |
 | `zshrc` | Zsh config (Zinit, pure prompt, aliases, tools) |
 
 Theme is **Catppuccin Mocha** everywhere.
 
 ## Git Workflow
 
-Projects are cloned as **bare repos** into `~/git/`. All code lives in worktrees managed by [Worktrunk](https://worktrunk.dev) (`wt`). Bare repos contain only git metadata — you never work directly in the `.git` directory.
+Projects are normal clones in `~/git/<repo>`. That checkout is the **primary** worktree: the copy source for `.env` files and other ignored artifacts. Extra worktrees for parallel work are managed by [Worktrunk](https://worktrunk.dev) (`wt`) and live in `~/worktrees/<repo>/<branch>`.
 
-### Clone a repo
+### Day-to-day: herdr project picker
 
-```bash
-cd ~/git
-git clone --bare git@github.com:org/repo.git repo.git
-
-# Create the primary worktree (required before feature branches)
-cd repo.git
-wt switch --create main
-```
-
-The `main` worktree is the "primary" — it's the copy source for `.env` files, ignored artifacts, etc. Always create it first.
-
-### Day-to-day: tmux project picker
-
-Press `Ctrl-f` from anywhere in tmux to open the project picker. It lists non-bare directories in `~/git` (like `dotfiles`) and creates a tmux session with three windows:
-
-- **Code** — nvim
-- **Server** — 3 horizontal panes for dev servers
-- **AI** — opencode
-
-For navigating between worktrees, use `wt switch` (interactive picker with diff/log previews).
+Press `Ctrl-f` in the shell (or `prefix+n` in herdr) to open the project picker. It lists the projects in `~/git` and every worktree in `~/worktrees` (labelled `repo/branch`), and opens the pick in a new herdr workspace. `prefix+f` switches between workspaces that are already open.
 
 ### Worktrees with Worktrunk
-
-[Worktrunk](https://worktrunk.dev) (`wt`) manages git worktrees for parallel work. Each worktree gets its own directory, tmux session, and can run an AI agent independently.
 
 #### Create a worktree
 
 ```bash
-cd ~/git/repo.git
+cd ~/git/repo
 
-# New branch from main
+# New branch from the default branch
 wt switch --create feature-auth
 
 # From a specific base
@@ -81,27 +58,14 @@ wt switch --create hotfix --base production
 wt switch feature-auth
 ```
 
-This creates the worktree inside the bare repo, runs any project hooks (dep install, env symlinks), and launches a tmux session with Code/AI/Server windows.
+This creates `~/worktrees/repo/feature-auth`, copies ignored files from the primary worktree, runs any project hooks and `cd`s into it.
 
 #### Launch an AI agent in a worktree
 
 ```bash
-# Create worktree and immediately start opencode
-wt switch --create feature-auth -x opencode
-
-# With a prompt for the agent
-wt switch --create fix-bug -x opencode -- 'Fix the pagination bug in GH #322'
+wt switch --create feature-auth -x claude
+wt switch --create fix-bug -x claude -- 'Fix the pagination bug in GH #322'
 ```
-
-#### Run multiple agents in parallel
-
-```bash
-wt switch -c feature-a -x opencode -- 'Add user authentication'
-wt switch -c feature-b -x opencode -- 'Fix the pagination bug'
-wt switch -c feature-c -x opencode -- 'Write tests for the API'
-```
-
-Each gets its own worktree, tmux session, and agent instance.
 
 #### List worktrees
 
@@ -201,7 +165,6 @@ Commands: `worker-loop`, `land`, `ux-microcopy`
 
 Helper scripts:
 - `ralph` — Runs the worker loop against Linear issues (`ralph --issue ENG-123`)
-- `wt-tmux-session` — Creates tmux sessions for worktrees (called by Worktrunk hook)
 
 ## Shell Aliases
 
@@ -210,10 +173,7 @@ Helper scripts:
 | `vim` | `nvim` |
 | `lg` | `lazygit` |
 | `ai` | `opencode` |
-| `ta` | `tmux attach` |
-| `tk` | `tmux kill-session -t` |
-| `tl` | `tmux list-sessions` |
-| `Ctrl-f` | `tmux-sessionizer` (project picker) |
+| `Ctrl-f` | `herdr-sessionizer` (project picker) |
 
 ## Adding a New Tool
 

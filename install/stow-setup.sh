@@ -13,11 +13,11 @@ STOW_PACKAGES=(
   claude
   ghostty
   gitconfig
+  herdr
   lazygit
   nvim
   opencode
   starship
-  tmux
   worktrunk
   zshrc
 )

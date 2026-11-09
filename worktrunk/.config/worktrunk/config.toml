@@ -1,10 +1,8 @@
 worktree-path = "~/worktrees/{{ repo }}/{{ branch | sanitize }}"
 
 [commit.generation]
-command = "opencode run -m anthropic/claude-haiku-4.5 --variant fast"
+command = "MAX_THINKING_TOKENS=0 claude -p --no-session-persistence --model=haiku --tools='' --safe-mode --setting-sources='user' --system-prompt=''"
 
+# New worktree: copy ignored files (.env etc.) from the primary worktree.
 [post-start]
 copy = "wt step copy-ignored"
-
-[post-switch]
-tmux = "[ -n \"$TMUX\" ] && tmux rename-window {{ branch | sanitize }}"

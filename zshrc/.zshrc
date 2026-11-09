@@ -56,9 +56,6 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 alias v="nvim"
 alias vim="nvim"
 alias lg="lazygit"
-alias ta="tmux attach"
-alias tk="tmux kill-session -t"
-alias tl="tmux list-sessions"
 alias ai="claude"
 alias python="python3"
 alias pip="pip3"
@@ -66,7 +63,6 @@ alias szsh="source ~/.zshrc"
 alias cloud="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
 alias nvm="fnm"
 alias pr="gh dash"
-alias npm="ni"
 
 # Agent skills (vercel-labs/skills): always global, stored in ~/.agents/skills
 # (dotfiles). Only codex is targeted; other agents symlink to that dir via
@@ -100,7 +96,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Static paths (adjust if different on Intel)
 HOMEBREW_PREFIX="/opt/homebrew"
 [ -d "$HOMEBREW_PREFIX/bin" ] && PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH"
-[ -d "$HOME/dotfiles/tmux/.local/scripts" ] && PATH="$HOME/dotfiles/tmux/.local/scripts:$PATH"
+[ -d "$HOME/.local/scripts" ] && PATH="$HOME/.local/scripts:$PATH"
 
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
@@ -115,7 +111,7 @@ export EDITOR="nvim"
 # Tools (lightweight first)
 # -----------------------------------------------------------------------------
 
-# Tmux
+# herdr project picker
 bindkey -s ^f "herdr-sessionizer\n"
 
 # FZF

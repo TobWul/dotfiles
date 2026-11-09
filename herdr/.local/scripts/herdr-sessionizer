@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# herdr-sessionizer: fuzzy pickers for herdr workspaces.
+#
+# Usage:
+#   herdr-sessionizer            open a NEW workspace from a ~/git project
+#   herdr-sessionizer new        same as above (explicit)
+#   herdr-sessionizer switch     switch to an already-open workspace
+#   herdr-sessionizer <PATH>     open/focus <PATH> directly (per-project keybinds)
+#
+# Bound in ~/.config/herdr/config.toml (type = "pane"):
+#   prefix+n -> new     prefix+f -> switch
+
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+
+# Create a workspace at $1 labelled $2 with the standard tab layout:
+#   1 "Code"   nvim
+#   2 "AI"     claude
+#   3 "Server" three empty shells (one left, two stacked on the right)
+create_workspace() {
+    local dir="$1" label="$2"
+    local out ws code_tab code_pane ai_pane server_pane right_pane
+    out="$("$herdr_bin" workspace create --cwd "$dir" --label "$label" --no-focus)"
+    ws="$(jq -r '.result.workspace.workspace_id' <<<"$out")"
+    code_tab="$(jq -r '.result.tab.tab_id' <<<"$out")"
+    code_pane="$(jq -r '.result.root_pane.pane_id' <<<"$out")"
+    "$herdr_bin" tab rename "$code_tab" Code >/dev/null
+
+    ai_pane="$("$herdr_bin" tab create --workspace "$ws" --cwd "$dir" --label AI --no-focus \
+        | jq -r '.result.root_pane.pane_id')"
+
+    server_pane="$("$herdr_bin" tab create --workspace "$ws" --cwd "$dir" --label Server --no-focus \
+        | jq -r '.result.root_pane.pane_id')"
+    right_pane="$("$herdr_bin" pane split "$server_pane" --direction right --cwd "$dir" --no-focus \
+        | jq -r '.result.pane.pane_id')"
+    "$herdr_bin" pane split "$right_pane" --direction down --cwd "$dir" --no-focus >/dev/null
+
+    "$herdr_bin" pane run "$code_pane" nvim >/dev/null
+    "$herdr_bin" pane run "$ai_pane" claude >/dev/null
+
+    "$herdr_bin" tab focus "$code_tab" >/dev/null
+    "$herdr_bin" workspace focus "$ws" >/dev/null
+}
+
+# Focus an open workspace whose label matches $1's basename, else create one.
+focus_or_create() {
+    local path="${1%/}"
+    local label id
+    label="$(basename "$path")"
+    id="$("$herdr_bin" workspace list 2>/dev/null \
+        | jq -r --arg label "$label" \
+            '.result.workspaces[]? | select(.label == $label) | .workspace_id' \
+        | head -n1)"
+    if [[ -n "$id" ]]; then
+        "$herdr_bin" workspace focus "$id"
+    else
+        create_workspace "$path" "$label"
+    fi
+}
+
+# Switch to an already-open workspace.
+pick_switch() {
+    local selection kind key
+    # Lines are TAB-separated: <workspace_id>\t<label>. fzf shows only the label.
+    selection="$("$herdr_bin" workspace list 2>/dev/null \
+        | jq -r '.result.workspaces[]? | "\(.workspace_id)\t\(.label)"' \
+        | fzf --reverse --delimiter='\t' --with-nth=2 --header='Switch workspace')"
+    [[ -z "$selection" ]] && exit 0
+    key="$(cut -f1 <<<"$selection")"
+    "$herdr_bin" workspace focus "$key"
+}
+
+# Open a new workspace from a ~/git project. Always creates a fresh workspace,
+# even if one for this project is already open (use prefix+f to switch instead).
+# Worktrunk worktrees (~/worktrees/<repo>/<branch>) are listed too, labelled
+# "<repo>/<branch>" so they don't collide with the main checkout's label.
+pick_new() {
+    local selection label path
+    # Lines are TAB-separated: <label>\t<path>. fzf shows only the label.
+    # Worktrees first (a worktree root has a .git *file*; any depth, so
+    # branches like feat/chart nested as <repo>/feat/chart are found too).
+    selection="$( {
+        find "$HOME/worktrees" -mindepth 3 -maxdepth 5 -name .git -type f 2>/dev/null \
+            | sed 's|/\.git$||' | sort \
+            | awk -v root="$HOME/worktrees/" '{ l = $0; sub(root, "", l); print l "\t" $0 }'
+        find "$HOME/git" -mindepth 1 -maxdepth 1 -type d ! -name '*.git' 2>/dev/null \
+            | sort | awk -F/ '{ print $NF "\t" $0 }'
+    } | fzf --reverse --delimiter='\t' --with-nth=1 --header='Open project workspace')"
+    [[ -z "$selection" ]] && exit 0
+    label="$(cut -f1 <<<"$selection")"
+    path="$(cut -f2 <<<"$selection")"
+    create_workspace "$path" "$label"
+}
+
+case "${1:-new}" in
+    switch) pick_switch ;;
+    new)    pick_new ;;
+    *)      focus_or_create "$1" ;;  # a path (per-project keybinds)
+esac

@@ -20,11 +20,26 @@ vim.keymap.set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { expr = tru
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
--- tmux navigation
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
+-- Seamless <C-h/j/k/l> navigation between Neovim splits and herdr panes.
+-- Move between splits; at a split edge, hand focus to the neighbouring herdr
+-- pane. The herdr side is the vim-herdr-navigation plugin, wired up in
+-- herdr/.config/herdr/config.toml.
+local function navigate(wincmd, dir)
+	local prev = vim.api.nvim_get_current_win()
+	vim.cmd("wincmd " .. wincmd)
+	if vim.api.nvim_get_current_win() ~= prev or (vim.env.HERDR_PANE_ID or "") == "" then
+		return
+	end
+	local herdr = vim.env.HERDR_BIN_PATH
+	if herdr == nil or herdr == "" then
+		herdr = "herdr"
+	end
+	vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--current" })
+end
+vim.keymap.set("n", "<C-h>", function() navigate("h", "left") end, { desc = "Navigate left (vim/herdr)" })
+vim.keymap.set("n", "<C-j>", function() navigate("j", "down") end, { desc = "Navigate down (vim/herdr)" })
+vim.keymap.set("n", "<C-k>", function() navigate("k", "up") end, { desc = "Navigate up (vim/herdr)" })
+vim.keymap.set("n", "<C-l>", function() navigate("l", "right") end, { desc = "Navigate right (vim/herdr)" })
 
 -- Half page up/down navigation
 vim.keymap.set("v", "<C-J>", ":m '>+1<CR>gv=gv")
@@ -61,8 +76,6 @@ vim.keymap.set("n", "va", "ggVG")
 
 -- Save
 vim.keymap.set("n", "<leader>s", "<cmd>w<CR>", { desc = "[S]ave" })
-
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 vim.keymap.set("n", "<leader>cr", ":%s:::g<Left><Left><Left>", { desc = "Search and Replace with" })
 vim.keymap.set("v", "<leader>cr", function()
