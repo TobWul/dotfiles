@@ -54,3 +54,6 @@ opencode/.config/opencode/skills
 
 # IPython history (per-machine)
 ipython/.ipython/profile_default/history.sqlite
+
+# Work-specific skills: kept local, not published (public repo)
+agents/.agents/skills/ren-ui-design/

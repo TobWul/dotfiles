@@ -12,6 +12,8 @@ metadata:
 Use this template for writing the PR body:
 
 ```markdown
+<Closes | Ref> <Linear issue ID>
+
 ## Summary
 
 <diagram, diff-sketch, or tree>
@@ -35,6 +37,15 @@ Use this template for writing the PR body:
 ## Sections
 
 Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+
+### Linear link
+
+When the work belongs to a Linear issue, the body's first line links it with a magic word and the issue ID. Magic words only count in the PR title or description, never in comments.
+
+- `Closes ENG-123` when merging the PR finishes the issue. Linear moves it to done on merge.
+- `Ref ENG-123` when the PR is only a step towards the issue. Linear tracks progress but leaves it open on merge.
+
+List several issues after one word: `Closes ENG-123, ENG-124`. With no Linear issue, drop the line.
 
 ### Summary
 
