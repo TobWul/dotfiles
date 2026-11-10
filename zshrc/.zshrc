@@ -131,4 +131,6 @@ source "$HOME/.railway/env"
 # <<< railway initialize <<<
 
 # Zoxide (must stay last: zoxide requires its hook to be set up after everything else)
-eval "$(zoxide init --cmd cd zsh)"
+# Skipped in Claude Code: its shell snapshot keeps the `cd` function but drops the
+# chpwd hook, which makes zoxide's doctor warn on every cd. Agents get builtin cd.
+[[ -z "$CLAUDECODE" ]] && eval "$(zoxide init --cmd cd zsh)"
