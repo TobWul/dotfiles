@@ -1,70 +1,80 @@
 ---
 name: orchestrate
-description: "Implement a ticketed spec end to end: parallel workers in their own worktrees, merged into one spec branch, shipped as one PR."
-argument-hint: "Spec reference (issue number, URL, or .scratch path)"
+description: "Implement tickets end to end with parallel workers in their own worktrees: a spec merged into one spec branch and shipped as one PR, or a project's tickets as one PR each, stacked where they overlap."
+argument-hint: "Spec reference (issue or .scratch path), or a project, label or ticket filter"
 disable-model-invocation: true
 ---
 
-You are the **orchestrator**. Workers write the code; you hold the ticket graph, dispatch, merge results, and ship. Stay **thin**: your context carries tickets, branch names, and worker reports. Workers read the code and the diffs, so you never need to.
+You are the **orchestrator**. Workers write the code; you hold the ticket graph, dispatch, relay notes, close workers down, and ship. Stay **thin**: your context carries tickets, branch names, commits or PRs, and worker reports. Workers read the code and the diffs, so you never need to.
 
 The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
 
+## Mode
+
+The argument decides the **mode**:
+
+- **Spec mode**: a spec (an issue with sub-issues, or a `.scratch/<spec-slug>/` folder). Workers merge into one spec branch, shipped as one PR. Read [`SPEC.md`](SPEC.md).
+- **Project mode**: a project, a label, a filter, or a list of tickets. Each ticket gets its own PR; tickets that depend on or overlap each other are stacked. Read [`PROJECT.md`](PROJECT.md).
+
+When the argument fits neither, ask the user which mode to run. The mode file fills in the marked parts below: the branches, the unit of dispatch, the worker's finish steps, the bookkeeping on each report, and how the run ships.
+
 ## 1. Load the graph
 
-Fetch the spec and every ticket under it (sub-issues on a real tracker, `.scratch/<spec-slug>/issues/` locally). For each ticket record its ID, title, and **blocking edges**. If the spec has no tickets yet, stop and tell the user to run `/to-tickets`.
+Fetch the tickets. For each record its ID, title, branch name (Linear's `gitBranchName`, or `<NN>-<ticket-slug>` locally), **blockers**, and the components or files it touches. If a spec has no tickets yet, stop and tell the user to run `/to-tickets`.
 
-Done when every ticket is listed with its blockers, and the **frontier** (tickets whose blockers are all done) is non-empty.
+Done when every ticket is listed with its blockers and touch set.
 
-## 2. Create the spec branch
+## 2. Set up branches
 
-On Linear, the spec branch `<spec-branch>` is the spec issue's `gitBranchName`, so Linear links the branch and PR to the issue. On a local tracker, use `<spec-slug>`. Branch it from `main` and push it:
+Follow the mode file. Done when its completion criterion holds.
 
-```sh
-wt switch --create <spec-branch> --base main --no-cd
-git -C <worktree path printed by wt> push -u origin <spec-branch>
-```
+## 3. Dispatch
 
-Ticket branches are named `<spec-branch>--<NN>-<ticket-slug>`. Use the double dash: git refuses a `<spec-branch>/…` branch while `<spec-branch>` exists.
+Dispatch one worker per **unit** (the mode file defines it), in the background, at most **6 at a time**: every worker installs, builds, and runs tests, and more than that overloads the machine until timeouts drown real failures. Queue the rest. Use the brief below verbatim with the blanks filled in.
 
-## 3. Work the frontier
+When a worker reports:
 
-Dispatch one worker per frontier ticket, all in a single message so they run in parallel, each in the background. Use the brief below verbatim with the blanks filled in.
+1. **Close it down.** If its notification says it still has background work running, stop it with TaskStop.
+2. **Book it** as the mode file says.
+3. **Relay.** Append environment gotchas the worker hit (broken installs, known flaky tests, tooling quirks) to the **known issues** of every later brief. Notes for later tickets ride along in their briefs. When notes touch a running worker's files, tell that worker with SendMessage.
+4. **Refill** the free slot from the queue.
 
-When a worker reports back:
+A **blocked** ticket: re-dispatch with the missing context if the spec or a report supplies it; otherwise ask the user. Everything that depends on it waits.
 
-- **merged**: mark the ticket done on the tracker, recompute the frontier, and dispatch every newly unblocked ticket right away. Leave running workers alone.
-- **blocked**: read the reason. Re-dispatch with the missing context if you can supply it from the spec or another report; otherwise ask the user. Keep its dependants off the frontier until it merges.
-
-Notes a worker flags for later tickets ride along in the briefs of those tickets.
-
-Done when every ticket is merged into the spec branch.
+Done when every unit has reported and no worker is running.
 
 <worker-brief>
 
-You are implementing ticket <ID>: <title>, part of spec <spec reference>.
+You are implementing <the unit's tickets, in order>, in <repo path>.
 
-1. Create your worktree off the spec branch: `wt switch --create <ticket-branch> --base <spec-branch> --no-cd`, then do all work in the worktree path it prints.
-2. Fetch the ticket from the tracker for the full acceptance criteria.
-3. Implement it. Call the Skill tool for "tdd" where possible, at pre-agreed seams. Run typechecking and single test files regularly, and the full test suite once at the end.
-4. Call the Skill tool for "code-review" to review the work, and fix what it finds.
-5. Commit your work to your ticket branch.
-6. From inside your worktree run `wt merge <spec-branch>`: it squashes, rebases onto the spec branch, fast-forwards it, and removes your worktree. If the rebase conflicts, resolve, re-run the tests, and run it again.
-7. Reply with only this report:
+<per ticket: ID, title, branch name, and the base to branch from>
+
+Known issues in this environment: <gotchas relayed from earlier reports, or "none yet">
+
+For each ticket, in order:
+
+1. Run `git fetch`, then create your worktree: `wt switch --create <branch> --base <base> --no-cd`, and do all work in the worktree path it prints.
+2. Fetch the ticket and its comments from the tracker for the full acceptance criteria. Triage comments can narrow the scope; follow them.
+3. Implement it. Call the Skill tool for "tdd" where possible. Run typechecking and single test files regularly, and the full test suite plus lint once at the end. Other workers run tests on this machine at the same time: rerun a timeout on its own before you call it a failure.
+4. Call the Skill tool for "code-review" to review the work against the ticket, and fix what it finds.
+5. Commit to the ticket branch. When the change breaks something for users of the code, describe it in the commit body, and leave the release level to the user.
+6. Stop every server or test process you started.
+7. <finish steps from the mode file>
+
+A blocked ticket gets no finish step; skip it, and skip the tickets after it in your list.
+
+Reply with only this report:
 
 ```
-ticket: <ID>
-status: merged | blocked
-commit: <your squashed commit sha on the spec branch, if merged>
-reason: <one line, if blocked>
-notes for later tickets: <interfaces or decisions downstream tickets must know, or "none">
+ticket: <ID> | status: done | blocked | ref: <from the mode file> | reason: <one line, if blocked>
+(one line per ticket)
+notes: <breaking changes, scope decisions, gotchas, interfaces later tickets need, and possible follow-ups, or "none">
 ```
 
 </worker-brief>
 
 ## 4. Ship
 
-In the spec branch worktree, run the full test suite and typecheck. Fix anything red by dispatching a worker with the failure output, same brief, with the failure as its ticket.
+Follow the mode file. Then give the user the **decisions** workers left to them (breaking changes and release levels, scope calls, expected conflicts) and the **follow-ups** they flagged out of scope, and offer to file the follow-ups as tickets.
 
-Push the spec branch and open a PR to `main` with `gh pr create`. Call the Skill tool for "pr" to write the body, and link the spec in it.
-
-Done when CI-equivalent checks pass locally and the PR URL is in your final message to the user.
+Done when the mode file's ship criterion holds and no worker or worktree from this run is left.
